@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-butter: #fffdf7;
+  --color-butter-dark: #f0ebe3;
+  --color-green: #306699;
+  --color-green-light: #285588;
+  --font-sans: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-butter);
+  color: var(--color-green);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.touch-target {
+  min-height: 2.75rem;
+}
+
+.scroll-hint {
+  scrollbar-width: thin;
+}
+
+@media (max-width: 640px) {
+  .mobile-card {
+    border-radius: 0.75rem;
+    background: white;
+    box-shadow: 0 1px 3px rgb(48 102 153 / 12%);
+  }
+}

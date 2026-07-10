@@ -1,0 +1,21 @@
+# Dependencies & build
+app/node_modules/
+app/dist/
+app/dev-dist/
+
+# Secrets
+app/.env
+.env
+*.local
+
+# Logs
+*.log
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Cursor assets (optional local images)
+assets/
