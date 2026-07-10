@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'pwa-icon.svg'],
       manifest: {
-        name: 'نظام رصد درجات التدريب الميداني',
-        short_name: 'رصد الدرجات',
-        description: 'نظام رصد درجات التدريب الميداني للكلية التطبيقية',
+        name: 'بوابة أعضاء هيئة التدريس',
+        short_name: 'بوابة الأعضاء',
+        description: 'بوابة أعضاء هيئة التدريس — الكلية التطبيقية (رفحاء)',
         theme_color: '#306699',
         background_color: '#fffdf7',
         display: 'standalone',

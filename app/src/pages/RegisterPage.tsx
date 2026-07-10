@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Alert } from '../components/Alert'
 import { useAuth } from '../contexts/AuthContext'
+import { PLATFORM_COLLEGE, PLATFORM_NAME, PLATFORM_ORG } from '../lib/brand'
 
 export function RegisterPage() {
   const { signUp, user, profile, loading } = useAuth()
@@ -50,9 +51,10 @@ export function RegisterPage() {
     <div className="app-shell flex min-h-screen min-h-dvh items-center justify-center p-4">
       <div className="auth-card">
         <div className="auth-header">
-          <p className="relative z-10 text-xs font-medium text-butter/70">جامعة الحدود الشمالية</p>
-          <h1 className="font-display relative z-10 mt-2 text-2xl font-bold">إنشاء حساب جديد</h1>
-          <p className="relative z-10 mt-3 text-sm text-butter/80">لأعضاء هيئة التدريس</p>
+          <p className="relative z-10 text-xs font-medium text-butter/70">{PLATFORM_ORG}</p>
+          <h1 className="font-display relative z-10 mt-2 text-2xl font-bold">{PLATFORM_NAME}</h1>
+          <p className="relative z-10 mt-3 text-sm text-butter/80">{PLATFORM_COLLEGE}</p>
+          <p className="relative z-10 mt-2 text-sm text-butter/70">إنشاء حساب جديد</p>
         </div>
 
         <form onSubmit={handleSubmit} className="animate-fade-up space-y-4 p-5 sm:p-6">

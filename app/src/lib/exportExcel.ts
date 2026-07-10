@@ -314,7 +314,7 @@ async function addSectionSheet(
 
 export async function exportSectionGradesToExcel(data: SectionExportData): Promise<Blob> {
   const workbook = new ExcelJS.Workbook()
-  workbook.creator = 'نظام رصد درجات التدريب الميداني'
+  workbook.creator = 'بوابة أعضاء هيئة التدريس'
   workbook.created = new Date()
 
   const sheetName = `مرجع ${data.section.section_number}`.slice(0, 31)
@@ -329,7 +329,7 @@ export async function exportSectionGradesToExcel(data: SectionExportData): Promi
 
 export async function exportGradesToExcel(sectionsData: SectionExportData[]): Promise<Blob> {
   const workbook = new ExcelJS.Workbook()
-  workbook.creator = 'نظام رصد درجات التدريب الميداني'
+  workbook.creator = 'بوابة أعضاء هيئة التدريس'
   workbook.created = new Date()
 
   for (const data of sectionsData) {
