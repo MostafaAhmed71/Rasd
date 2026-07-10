@@ -1,0 +1,8 @@
+{
+  "name": "rasd-portal",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix app",
+    "dev": "npm run dev --prefix app"
+  }
+}
