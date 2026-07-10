@@ -1,19 +1,11 @@
-Version: v1.4.1
+Version: v1.4.3
 Date: 2026-07-10
 
 Changes
-- اعتماد الاسم الرسمي للمنصة: بوابة أعضاء هيئة التدريس
-- تحديث عنوان الموقع، PWA، صفحات الدخول/التسجيل، والهيدر
+- إضافة ملف عرض سعر للمنصة: Docs/QUOTATION.md
 
 Files Modified
-- app/src/lib/brand.ts
-- app/index.html
-- app/vite.config.ts
-- app/src/components/Layout.tsx
-- app/src/pages/LoginPage.tsx
-- app/src/pages/RegisterPage.tsx
-- app/src/lib/exportExcel.ts
-- README.md
+- Docs/QUOTATION.md
 - VERSION.md
 
-Previous: v1.4.0
+Previous: v1.4.2

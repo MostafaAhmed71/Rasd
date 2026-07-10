@@ -431,13 +431,11 @@ input[type="number"] {
 }
 
 .page-header-bar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 20;
   background: linear-gradient(135deg, #306699 0%, #285588 100%);
   color: var(--color-butter);
   box-shadow: 0 4px 20px rgb(48 102 153 / 25%);
-  backdrop-filter: blur(12px);
 }
 
 .skeleton {
