@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Layout } from '../components/Layout'
-import { downloadBlob, exportSectionGradesToExcel } from '../lib/exportExcel'
-import { getSectionInstructorName } from '../lib/sections'
-import { supabase } from '../lib/supabase'
-import type { GradeField, Section, StudentWithGrade } from '../types/database'
-import { GRADE_FIELDS } from '../types/database'
+import { Alert } from '../../components/Alert'
+import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus'
+import { downloadBlob, exportSectionGradesToExcel } from '../../lib/exportExcel'
+import { getSectionInstructorName } from '../../lib/sections'
+import { supabase } from '../../lib/supabase'
+import type { GradeField, Section, StudentWithGrade } from '../../types/database'
+import { GRADE_FIELDS } from '../../types/database'
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-export function InstructorDashboard() {
+export function GradesPage() {
   const [sections, setSections] = useState<Section[]>([])
   const [selectedSectionId, setSelectedSectionId] = useState<string>('')
   const [students, setStudents] = useState<StudentWithGrade[]>([])
@@ -19,28 +20,28 @@ export function InstructorDashboard() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function loadSections() {
-      setLoading(true)
-      const { data, error: secError } = await supabase
-        .from('sections')
-        .select('*')
-        .order('section_number')
+  const loadSections = useCallback(async () => {
+    setLoading(true)
+    const { data, error: secError } = await supabase
+      .from('sections')
+      .select('*')
+      .order('section_number')
 
-      if (secError) {
-        setError(secError.message)
-      } else {
-        setSections((data as Section[]) ?? [])
-        if (data?.length) setSelectedSectionId(data[0].id)
-      }
-      setLoading(false)
+    if (secError) {
+      setError(secError.message)
+    } else {
+      const list = (data as Section[]) ?? []
+      setSections(list)
+      setSelectedSectionId((prev) =>
+        prev && list.some((s) => s.id === prev) ? prev : (list[0]?.id ?? ''),
+      )
     }
-    loadSections()
+    setLoading(false)
   }, [])
 
-  const loadStudents = useCallback(async (sectionId: string) => {
+  const loadStudents = useCallback(async (sectionId: string, opts?: { silent?: boolean }) => {
     if (!sectionId) return
-    setLoadingStudents(true)
+    if (!opts?.silent) setLoadingStudents(true)
     setError(null)
 
     const { data, error: stError } = await supabase
@@ -64,8 +65,17 @@ export function InstructorDashboard() {
   }, [])
 
   useEffect(() => {
-    if (selectedSectionId) loadStudents(selectedSectionId)
+    void loadSections()
+  }, [loadSections])
+
+  useEffect(() => {
+    if (selectedSectionId) void loadStudents(selectedSectionId)
   }, [selectedSectionId, loadStudents])
+
+  useRefreshOnFocus(() => {
+    void loadSections()
+    if (selectedSectionId) void loadStudents(selectedSectionId, { silent: true })
+  })
 
   const handleGradeChange = (studentId: string, field: GradeField, value: string) => {
     const num = value === '' ? null : Number(value)
@@ -174,10 +184,13 @@ export function InstructorDashboard() {
           inputMode="decimal"
         />
         {status === 'saved' && (
-          <span className="absolute -top-1 -left-1 text-xs text-green">✓</span>
+          <span className="animate-check absolute -top-1 -left-1 text-xs text-green">✓</span>
         )}
         {status === 'error' && (
-          <span className="absolute -top-1 -left-1 text-xs text-red-600">!</span>
+          <span className="animate-check absolute -top-1 -left-1 text-xs text-red-600">!</span>
+        )}
+        {status === 'saving' && (
+          <span className="absolute -top-1 -left-1 h-2 w-2 animate-pulse rounded-full bg-green/50" />
         )}
       </div>
     )
@@ -208,22 +221,17 @@ export function InstructorDashboard() {
   }
 
   return (
-    <Layout title="لوحة عضو التدريس">
-      {error && (
-        <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-      )}
+    <>
+      {error && <Alert type="error">{error}</Alert>}
+      {message && <Alert type="success">{message}</Alert>}
 
-      {message && (
-        <div className="mb-4 rounded-lg bg-green/10 px-4 py-3 text-sm text-green">{message}</div>
-      )}
-
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <label className="text-sm font-medium text-green">اختر الرقم المرجعي:</label>
+      <div className="panel mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        <label className="text-sm font-semibold text-green">اختر الرقم المرجعي:</label>
         <select
           value={selectedSectionId}
           onChange={(e) => setSelectedSectionId(e.target.value)}
           disabled={loading || sections.length === 0}
-          className="touch-target w-full rounded-lg border border-green/20 bg-white px-4 py-2 text-green outline-none focus:border-green sm:w-auto"
+          className="field-input sm:w-auto sm:min-w-[16rem]"
         >
           {sections.map((sec) => (
             <option key={sec.id} value={sec.id}>
@@ -233,13 +241,15 @@ export function InstructorDashboard() {
           ))}
         </select>
         {selectedSection && (
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
-            <span className="text-sm text-green/70">{students.length} طالب</span>
+          <div className="flex w-full flex-col gap-2 sm:mr-auto sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+            <span className="rounded-full bg-green-soft px-3 py-1 text-sm font-medium text-green">
+              {students.length} طالب
+            </span>
             <button
               type="button"
               onClick={handleExport}
               disabled={exporting || loadingStudents || students.length === 0}
-              className="touch-target w-full rounded-lg bg-green px-4 py-2 text-sm font-medium text-butter transition hover:bg-green-light disabled:opacity-50 sm:w-auto"
+              className="btn-primary w-full sm:w-auto"
             >
               {exporting ? 'جاري التصدير...' : 'تصدير Excel'}
             </button>
@@ -248,35 +258,41 @@ export function InstructorDashboard() {
       </div>
 
       {loading ? (
-        <p className="text-green">جاري تحميل الشعب...</p>
+        <div className="space-y-3">
+          <div className="skeleton h-10 w-full" />
+          <div className="skeleton h-40 w-full" />
+        </div>
       ) : sections.length === 0 ? (
-        <div className="rounded-xl bg-white p-8 text-center text-green/70">
+        <div className="panel p-8 text-center text-green/70">
           لا توجد شعب مخصصة لك حالياً. تواصل مع مسؤول النظام.
         </div>
       ) : loadingStudents ? (
-        <p className="text-green">جاري تحميل الطلاب...</p>
+        <div className="space-y-3">
+          <div className="skeleton h-12 w-full" />
+          <div className="skeleton h-64 w-full" />
+        </div>
       ) : (
         <>
-          <div className="scroll-hint hidden overflow-x-auto rounded-xl bg-white shadow-md md:block">
+          <div className="panel scroll-hint hidden overflow-x-auto md:block">
             <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="bg-green text-butter">
-                  <th className="px-3 py-3 text-right font-bold">الرقم الجامعي</th>
-                  <th className="px-3 py-3 text-right font-bold">اسم الطالب</th>
+                  <th className="px-3 py-3.5 text-right font-bold">الرقم الجامعي</th>
+                  <th className="px-3 py-3.5 text-right font-bold">اسم الطالب</th>
                   {GRADE_FIELDS.map((f) => (
-                    <th key={f.key} className="px-2 py-3 text-center font-bold">
+                    <th key={f.key} className="px-2 py-3.5 text-center font-bold">
                       {f.label}
                       <span className="block text-xs font-normal opacity-80">({f.max})</span>
                     </th>
                   ))}
-                  <th className="px-3 py-3 text-center font-bold">المجموع</th>
+                  <th className="px-3 py-3.5 text-center font-bold">المجموع</th>
                 </tr>
               </thead>
               <tbody>
                 {students.map((student, idx) => (
                   <tr
                     key={student.id}
-                    className={idx % 2 === 0 ? 'bg-butter/20' : 'bg-white'}
+                    className={`table-row-hover ${idx % 2 === 0 ? 'bg-butter/30' : 'bg-white'}`}
                   >
                     <td className="px-3 py-2 font-mono text-xs" dir="ltr">
                       {student.university_id}
@@ -323,6 +339,6 @@ export function InstructorDashboard() {
           </div>
         </>
       )}
-    </Layout>
+    </>
   )
 }

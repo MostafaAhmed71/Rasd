@@ -1,9 +1,15 @@
-import { type ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { AdminNav } from '../components/AdminNav'
+import { Alert } from '../components/Alert'
 import { Layout } from '../components/Layout'
+import { PageMotion } from '../components/PageMotion'
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
 import { downloadBlob, exportGradesToExcel } from '../lib/exportExcel'
 import { parseImportFile } from '../lib/import'
 import { getSectionInstructorName, matchInstructorId } from '../lib/sections'
 import { supabase } from '../lib/supabase'
+import { AdminAbsencePanel } from './admin/AdminAbsencePanel'
+import { AdminDocumentsPanel } from './admin/AdminDocumentsPanel'
 import type { Profile, Section, StudentWithGrade } from '../types/database'
 import { IMPORT_COLUMNS } from '../types/database'
 
@@ -15,6 +21,7 @@ interface SectionProgress {
 }
 
 export function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<'data' | 'documents' | 'absence'>('data')
   const [sections, setSections] = useState<SectionProgress[]>([])
   const [instructors, setInstructors] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
@@ -22,8 +29,8 @@ export function AdminDashboard() {
   const [exporting, setExporting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  const loadData = useCallback(async () => {
-    setLoading(true)
+  const loadData = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setLoading(true)
 
     const [sectionsRes, instructorsRes, studentsRes] = await Promise.all([
       supabase.from('sections').select('*, profiles(full_name)').order('section_number'),
@@ -62,8 +69,20 @@ export function AdminDashboard() {
   }, [])
 
   useEffect(() => {
-    loadData()
+    void loadData()
   }, [loadData])
+
+  const prevTabRef = useRef(activeTab)
+  useEffect(() => {
+    if (activeTab === 'data' && prevTabRef.current !== 'data') {
+      void loadData({ silent: true })
+    }
+    prevTabRef.current = activeTab
+  }, [activeTab, loadData])
+
+  useRefreshOnFocus(() => {
+    if (activeTab === 'data') void loadData({ silent: true })
+  })
 
   const handleImport = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -141,7 +160,7 @@ export function AdminDashboard() {
       if (upsertError) throw upsertError
 
       setMessage({ type: 'success', text: `تم استيراد ${rows.length} طالب بنجاح.` })
-      await loadData()
+      await loadData({ silent: true })
     } catch (err) {
       setMessage({
         type: 'error',
@@ -163,8 +182,26 @@ export function AdminDashboard() {
       return
     }
 
+    const instructor = instructors.find((i) => i.id === instructorId)
+    setSections((prev) =>
+      prev.map((item) =>
+        item.section.id === sectionId
+          ? {
+              ...item,
+              section: {
+                ...item.section,
+                instructor_id: instructorId || null,
+              },
+              instructorName:
+                item.section.instructor_name?.trim() ||
+                instructor?.full_name ||
+                item.instructorName,
+            }
+          : item,
+      ),
+    )
     setMessage({ type: 'success', text: 'تم ربط عضو التدريس بالشعبة.' })
-    await loadData()
+    await loadData({ silent: true })
   }
 
   const handleExport = async () => {
@@ -214,21 +251,27 @@ export function AdminDashboard() {
 
   return (
     <Layout title="لوحة مسؤول النظام">
-      {message && (
-        <div
-          className={`mb-4 rounded-lg px-4 py-3 text-sm ${
-            message.type === 'success'
-              ? 'bg-green/10 text-green'
-              : 'bg-red-50 text-red-700'
-          }`}
-        >
-          {message.text}
-        </div>
+      <AdminNav active={activeTab} onChange={setActiveTab} />
+
+      {message && <Alert type={message.type}>{message.text}</Alert>}
+
+      {activeTab === 'documents' && (
+        <PageMotion key="documents">
+          <AdminDocumentsPanel instructors={instructors} onMessage={setMessage} />
+        </PageMotion>
       )}
 
+      {activeTab === 'absence' && (
+        <PageMotion key="absence">
+          <AdminAbsencePanel onMessage={setMessage} />
+        </PageMotion>
+      )}
+
+      {activeTab === 'data' && (
+        <PageMotion key="data">
       <div className="mb-8 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl bg-white p-4 shadow-md sm:p-6">
-          <h2 className="mb-3 text-lg font-bold text-green">استيراد بيانات الطلاب</h2>
+        <div className="panel animate-fade-up stagger-1 p-4 sm:p-6">
+          <h2 className="font-display mb-2 text-lg font-bold text-green">استيراد بيانات الطلاب</h2>
           <p className="mb-4 text-sm text-green/70">
             ارفع ملف Excel أو CSV بالأعمدة التالية:
           </p>
@@ -242,7 +285,7 @@ export function AdminDashboard() {
               </span>
             ))}
           </div>
-          <label className="inline-flex w-full cursor-pointer items-center justify-center rounded-lg bg-green px-5 py-3 font-medium text-butter transition hover:bg-green-light sm:w-auto sm:py-2.5">
+          <label className="btn-primary w-full cursor-pointer sm:w-auto">
             {importing ? 'جاري الاستيراد...' : 'اختر ملف للاستيراد'}
             <input
               type="file"
@@ -254,8 +297,8 @@ export function AdminDashboard() {
           </label>
         </div>
 
-        <div className="rounded-xl bg-white p-4 shadow-md sm:p-6">
-          <h2 className="mb-3 text-lg font-bold text-green">تصدير النتيجة النهائية</h2>
+        <div className="panel animate-fade-up stagger-2 p-4 sm:p-6">
+          <h2 className="font-display mb-2 text-lg font-bold text-green">تصدير النتيجة النهائية</h2>
           <p className="mb-4 text-sm text-green/70">
             تصدير ملف Excel بشيت منفصل لكل شعبة بنفس تصميم الشيت الأصلي
           </p>
@@ -263,15 +306,15 @@ export function AdminDashboard() {
             type="button"
             onClick={handleExport}
             disabled={exporting || sections.length === 0}
-            className="touch-target w-full rounded-lg bg-green px-5 py-3 font-medium text-butter transition hover:bg-green-light disabled:opacity-50 sm:w-auto sm:py-2.5"
+            className="btn-primary w-full sm:w-auto"
           >
             {exporting ? 'جاري التصدير...' : 'تصدير النتيجة'}
           </button>
         </div>
       </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-md sm:p-6">
-        <h2 className="mb-4 text-lg font-bold text-green">الشعب ونسبة الإنجاز</h2>
+      <div className="panel animate-fade-up stagger-3 p-4 sm:p-6">
+        <h2 className="font-display mb-4 text-lg font-bold text-green">الشعب ونسبة الإنجاز</h2>
 
         {loading ? (
           <p className="text-green/70">جاري التحميل...</p>
@@ -298,7 +341,7 @@ export function AdminDashboard() {
                       ? Math.round((item.gradedStudents / item.totalStudents) * 100)
                       : 0
                   return (
-                    <tr key={item.section.id} className="border-b border-green/5">
+                    <tr key={item.section.id} className="table-row-hover border-b border-green/5">
                       <td className="px-4 py-3 font-bold">{item.section.section_number}</td>
                       <td className="px-4 py-3 font-mono text-xs" dir="ltr">
                         {item.section.course_code ?? '—'}
@@ -410,13 +453,15 @@ export function AdminDashboard() {
         )}
       </div>
 
-      <div className="mt-6 rounded-xl border border-green/10 bg-butter/50 p-4 text-sm text-green/80">
+      <div className="mt-6 rounded-xl border border-green/10 bg-green-soft/60 p-4 text-sm text-green/80 animate-fade-up">
         <strong>ملاحظة:</strong> لإضافة أعضاء تدريس جدد، أنشئ حساباتهم من لوحة Supabase (Authentication
         → Users) مع تحديد الدور في metadata:{' '}
         <code className="rounded bg-white px-1" dir="ltr">
           {`{"role": "instructor", "full_name": "اسم المدرّس"}`}
         </code>
       </div>
+        </PageMotion>
+      )}
     </Layout>
   )
 }

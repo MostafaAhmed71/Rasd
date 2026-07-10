@@ -97,3 +97,77 @@ export const IMPORT_COLUMNS = [
   'الرقم المرجعي',
   'رمز المقرر',
 ] as const
+
+export type DocumentType = 'supervision' | 'study'
+
+export interface InstructorDocument {
+  id: string
+  instructor_id: string
+  document_type: DocumentType
+  file_path: string
+  file_name: string
+  uploaded_by: string | null
+  created_at: string
+}
+
+export type AbsenceStatus = 'pending' | 'approved' | 'rejected'
+export type LectureMode = 'in_person' | 'remote'
+export type ApologyType = 'remote_delivery' | 'full_absence'
+
+export interface AbsenceRequest {
+  id: string
+  instructor_id: string
+  college: string | null
+  status: AbsenceStatus
+  admin_note: string | null
+  reviewed_by: string | null
+  reviewed_at: string | null
+  created_at: string
+  profiles?: { full_name: string | null } | null
+  absence_request_lectures?: AbsenceRequestLecture[]
+}
+
+export interface AbsenceRequestLecture {
+  id: string
+  request_id: string
+  row_order: number
+  course_name: string
+  section_number: string | null
+  course_code: string | null
+  lecture_date: string
+  lecture_time: string
+  lecture_mode: LectureMode
+  apology_type: ApologyType
+  created_at: string
+}
+
+export interface AbsenceLectureInput {
+  course_name: string
+  section_number: string
+  course_code: string
+  lecture_date: string
+  lecture_time: string
+  lecture_mode: LectureMode
+  apology_type: ApologyType
+}
+
+export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
+  supervision: 'جدول المراقبة',
+  study: 'جدول الدراسة',
+}
+
+export const ABSENCE_STATUS_LABELS: Record<AbsenceStatus, string> = {
+  pending: 'قيد المراجعة',
+  approved: 'مقبول',
+  rejected: 'مرفوض',
+}
+
+export const LECTURE_MODE_LABELS: Record<LectureMode, string> = {
+  in_person: 'حضوري',
+  remote: 'عن بُعد',
+}
+
+export const APOLOGY_TYPE_LABELS: Record<ApologyType, string> = {
+  remote_delivery: 'تقديم المحاضرة عن بُعد',
+  full_absence: 'الاعتذار عن المحاضرة نهائياً',
+}

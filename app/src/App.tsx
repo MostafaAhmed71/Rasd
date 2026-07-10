@@ -3,8 +3,11 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
-import { InstructorDashboard } from './pages/InstructorDashboard'
 import { AdminDashboard } from './pages/AdminDashboard'
+import { AbsencePage } from './pages/instructor/AbsencePage'
+import { DocumentsPage } from './pages/instructor/DocumentsPage'
+import { GradesPage } from './pages/instructor/GradesPage'
+import { InstructorLayout } from './pages/instructor/InstructorLayout'
 
 function App() {
   return (
@@ -14,7 +17,13 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route element={<ProtectedRoute allowedRoles={['instructor']} />}>
-            <Route path="/instructor" element={<InstructorDashboard />} />
+            <Route path="/instructor" element={<InstructorLayout />}>
+              <Route index element={<Navigate to="grades" replace />} />
+              <Route path="grades" element={<GradesPage />} />
+              <Route path="supervision" element={<DocumentsPage documentType="supervision" />} />
+              <Route path="study" element={<DocumentsPage documentType="study" />} />
+              <Route path="absence" element={<AbsencePage />} />
+            </Route>
           </Route>
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/admin" element={<AdminDashboard />} />

@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
+import { Alert } from '../components/Alert'
 import { useAuth } from '../contexts/AuthContext'
 
 export function LoginPage() {
@@ -10,7 +11,7 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (!loading && user && profile) {
-    return <Navigate to={profile.role === 'admin' ? '/admin' : '/instructor'} replace />
+    return <Navigate to={profile.role === 'admin' ? '/admin' : '/instructor/grades'} replace />
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -23,20 +24,23 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen min-h-dvh items-center justify-center bg-butter p-4">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl shadow-xl">
-        <div className="bg-green px-6 py-8 text-center text-butter">
-          <h1 className="text-2xl font-bold">نظام رصد درجات التدريب الميداني</h1>
-          <p className="mt-2 text-sm opacity-80">سجّل دخولك للمتابعة</p>
+    <div className="app-shell flex min-h-screen min-h-dvh items-center justify-center p-4">
+      <div className="auth-card">
+        <div className="auth-header">
+          <p className="relative z-10 text-xs font-medium text-butter/70">جامعة الحدود الشمالية</p>
+          <h1 className="font-display relative z-10 mt-2 text-2xl font-bold leading-snug">
+            نظام رصد درجات
+            <br />
+            التدريب الميداني
+          </h1>
+          <p className="relative z-10 mt-3 text-sm text-butter/80">سجّل دخولك للمتابعة</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 sm:p-6">
-          {error && (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-          )}
+        <form onSubmit={handleSubmit} className="animate-fade-up space-y-4 p-5 sm:p-6">
+          {error && <Alert type="error">{error}</Alert>}
 
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-green">
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-green">
               البريد الإلكتروني
             </label>
             <input
@@ -45,14 +49,14 @@ export function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="touch-target w-full rounded-lg border border-green/20 bg-butter/30 px-4 py-3 text-green outline-none focus:border-green focus:ring-2 focus:ring-green/20"
+              className="field-input"
               placeholder="example@university.edu"
               dir="ltr"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-green">
+            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-green">
               كلمة المرور
             </label>
             <input
@@ -61,22 +65,28 @@ export function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="touch-target w-full rounded-lg border border-green/20 bg-butter/30 px-4 py-3 text-green outline-none focus:border-green focus:ring-2 focus:ring-green/20"
+              className="field-input"
               dir="ltr"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="touch-target w-full rounded-lg bg-green py-3 font-bold text-butter transition hover:bg-green-light disabled:opacity-60"
-          >
-            {submitting ? 'جاري الدخول...' : 'تسجيل الدخول'}
+          <button type="submit" disabled={submitting} className="btn-primary w-full">
+            {submitting ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="h-4 w-4 animate-pulse rounded-full border-2 border-butter/40 border-t-butter" />
+                جاري الدخول...
+              </span>
+            ) : (
+              'تسجيل الدخول'
+            )}
           </button>
 
           <p className="text-center text-sm text-green/70">
             ليس لديك حساب؟{' '}
-            <Link to="/register" className="font-medium text-green underline hover:text-green-light">
+            <Link
+              to="/register"
+              className="font-semibold text-green underline decoration-green/30 underline-offset-4 transition hover:decoration-green"
+            >
               إنشاء حساب
             </Link>
           </p>
