@@ -36,7 +36,17 @@
 }
 ```
 
-## الخطوة 4: تشغيل التطبيق
+## النشر (Vercel / Netlify)
+
+### إعدادات Vercel
+- **Root Directory:** اتركه فارغاً (الجذر) — ملف `vercel.json` يوجّه البناء تلقائياً
+- **Environment Variables** (مطلوبة):
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+
+### إعدادات Netlify
+- يستخدم `netlify.toml` تلقائياً — مجلد البناء: `app/dist`
+
 
 ```bash
 cd app
