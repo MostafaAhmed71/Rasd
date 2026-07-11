@@ -4,7 +4,7 @@ const tabs = [
   { to: '/instructor/courses', label: 'موادي' },
   { to: '/instructor/grades', label: 'رصد الدرجات' },
   { to: '/instructor/supervision', label: 'جدول المراقبة' },
-  { to: '/instructor/study', label: 'جدول الدراسة' },
+  { to: '/instructor/study', label: 'جدول عضو هيئة التدريس' },
   { to: '/instructor/absence', label: 'طلب غياب' },
 ] as const
 

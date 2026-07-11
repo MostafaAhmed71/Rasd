@@ -99,7 +99,7 @@ export function AdminDocumentsPanel({ instructors, onMessage }: AdminDocumentsPa
       <div className="panel p-4 sm:p-6">
         <h2 className="font-display mb-2 text-lg font-bold text-green">رفع مستندات الأعضاء</h2>
         <p className="mb-4 text-sm text-green/70">
-          ارفع جدول المراقبة أو جدول الدراسة بصيغة PDF لعضو تدريس محدد.
+          ارفع جدول المراقبة أو جدول عضو هيئة التدريس بصيغة PDF لعضو تدريس محدد.
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

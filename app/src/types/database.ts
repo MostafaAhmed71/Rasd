@@ -159,7 +159,7 @@ export interface AbsenceLectureInput {
 
 export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   supervision: 'جدول المراقبة',
-  study: 'جدول الدراسة',
+  study: 'جدول عضو هيئة التدريس',
 }
 
 export const ABSENCE_STATUS_LABELS: Record<AbsenceStatus, string> = {
