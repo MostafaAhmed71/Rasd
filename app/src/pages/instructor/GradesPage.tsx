@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Alert } from '../../components/Alert'
 import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus'
 import { downloadBlob, exportSectionGradesToExcel } from '../../lib/exportExcel'
@@ -9,7 +10,20 @@ import { GRADE_FIELDS } from '../../types/database'
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
+function emptyGrades(studentId: string) {
+  return {
+    student_id: studentId,
+    coursework_score: null,
+    midterm_score: null,
+    final_exam_score: null,
+    total_score: null,
+    updated_by: null,
+    updated_at: '',
+  }
+}
+
 export function GradesPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [sections, setSections] = useState<Section[]>([])
   const [selectedSectionId, setSelectedSectionId] = useState<string>('')
   const [students, setStudents] = useState<StudentWithGrade[]>([])
@@ -32,12 +46,15 @@ export function GradesPage() {
     } else {
       const list = (data as Section[]) ?? []
       setSections(list)
-      setSelectedSectionId((prev) =>
-        prev && list.some((s) => s.id === prev) ? prev : (list[0]?.id ?? ''),
-      )
+      const fromQuery = searchParams.get('section')
+      setSelectedSectionId((prev) => {
+        if (fromQuery && list.some((s) => s.id === fromQuery)) return fromQuery
+        if (prev && list.some((s) => s.id === prev)) return prev
+        return list[0]?.id ?? ''
+      })
     }
     setLoading(false)
-  }, [])
+  }, [searchParams])
 
   const loadStudents = useCallback(async (sectionId: string, opts?: { silent?: boolean }) => {
     if (!sectionId) return
@@ -77,25 +94,17 @@ export function GradesPage() {
     if (selectedSectionId) void loadStudents(selectedSectionId, { silent: true })
   })
 
+  const handleSectionChange = (sectionId: string) => {
+    setSelectedSectionId(sectionId)
+    setSearchParams(sectionId ? { section: sectionId } : {})
+  }
+
   const handleGradeChange = (studentId: string, field: GradeField, value: string) => {
     const num = value === '' ? null : Number(value)
     setStudents((prev) =>
       prev.map((s) => {
         if (s.id !== studentId) return s
-        const grades = s.grades ?? {
-          student_id: studentId,
-          field_supervisor_score: null,
-          academic_supervisor_score: null,
-          platform_course_1: null,
-          platform_course_2: null,
-          platform_course_3: null,
-          platform_course_4: null,
-          report_writing_score: null,
-          report_discussion_score: null,
-          total_score: null,
-          updated_by: null,
-          updated_at: '',
-        }
+        const grades = s.grades ?? emptyGrades(studentId)
         return { ...s, grades: { ...grades, [field]: num } }
       }),
     )
@@ -118,14 +127,9 @@ export function GradesPage() {
 
     const payload = {
       student_id: studentId,
-      field_supervisor_score: gradeData?.field_supervisor_score ?? null,
-      academic_supervisor_score: gradeData?.academic_supervisor_score ?? null,
-      platform_course_1: gradeData?.platform_course_1 ?? null,
-      platform_course_2: gradeData?.platform_course_2 ?? null,
-      platform_course_3: gradeData?.platform_course_3 ?? null,
-      platform_course_4: gradeData?.platform_course_4 ?? null,
-      report_writing_score: gradeData?.report_writing_score ?? null,
-      report_discussion_score: gradeData?.report_discussion_score ?? null,
+      coursework_score: gradeData?.coursework_score ?? null,
+      midterm_score: gradeData?.midterm_score ?? null,
+      final_exam_score: gradeData?.final_exam_score ?? null,
     }
 
     const { data, error: saveError } = await supabase
@@ -153,14 +157,7 @@ export function GradesPage() {
     if (!g) return '—'
     if (g.total_score != null) return g.total_score
     const sum =
-      (g.field_supervisor_score ?? 0) +
-      (g.academic_supervisor_score ?? 0) +
-      (g.platform_course_1 ?? 0) +
-      (g.platform_course_2 ?? 0) +
-      (g.platform_course_3 ?? 0) +
-      (g.platform_course_4 ?? 0) +
-      (g.report_writing_score ?? 0) +
-      (g.report_discussion_score ?? 0)
+      (g.coursework_score ?? 0) + (g.midterm_score ?? 0) + (g.final_exam_score ?? 0)
     return sum || '—'
   }
 
@@ -179,7 +176,7 @@ export function GradesPage() {
           value={student.grades?.[field.key] ?? ''}
           onChange={(e) => handleGradeChange(student.id, field.key, e.target.value)}
           onBlur={() => handleGradeBlur(student.id, field.key)}
-          className="touch-target w-full min-w-0 rounded border border-green/20 bg-white px-2 py-2 text-center text-green outline-none focus:border-green md:w-16 md:py-1.5"
+          className="touch-target w-full min-w-0 rounded border border-green/20 bg-white px-2 py-2 text-center text-green outline-none focus:border-green md:w-20 md:py-1.5"
           dir="ltr"
           inputMode="decimal"
         />
@@ -210,7 +207,7 @@ export function GradesPage() {
       })
       downloadBlob(
         blob,
-        `درجات-مرجع-${selectedSection.section_number}-${new Date().toISOString().slice(0, 10)}.xlsx`,
+        `درجات-${selectedSection.course_code ?? 'مقرر'}-شعبة-${selectedSection.section_number}-${new Date().toISOString().slice(0, 10)}.xlsx`,
       )
       setMessage('تم تصدير الملف بنجاح.')
     } catch (err) {
@@ -226,17 +223,20 @@ export function GradesPage() {
       {message && <Alert type="success">{message}</Alert>}
 
       <div className="panel mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <label className="text-sm font-semibold text-green">اختر الرقم المرجعي:</label>
+        <Link to="/instructor/courses" className="btn-ghost text-sm sm:order-last">
+          ← موادي
+        </Link>
+        <label className="text-sm font-semibold text-green">اختر المادة / الشعبة:</label>
         <select
           value={selectedSectionId}
-          onChange={(e) => setSelectedSectionId(e.target.value)}
+          onChange={(e) => handleSectionChange(e.target.value)}
           disabled={loading || sections.length === 0}
-          className="field-input sm:w-auto sm:min-w-[16rem]"
+          className="field-input sm:w-auto sm:min-w-[18rem]"
         >
           {sections.map((sec) => (
             <option key={sec.id} value={sec.id}>
-              الرقم المرجعي {sec.section_number}
-              {sec.course_title ? ` — ${sec.course_title}` : ''}
+              {sec.course_title ?? 'مقرر'} — شعبة {sec.section_number}
+              {sec.course_code ? ` (${sec.course_code})` : ''}
             </option>
           ))}
         </select>
@@ -257,6 +257,20 @@ export function GradesPage() {
         )}
       </div>
 
+      {selectedSection && (
+        <div className="mb-4 rounded-xl border border-green/10 bg-green-soft/40 px-4 py-3 text-sm text-green">
+          <span className="font-bold">{selectedSection.course_title ?? '—'}</span>
+          <span className="mx-2 opacity-40">·</span>
+          رقم الشعبة: <strong>{selectedSection.section_number}</strong>
+          {selectedSection.course_code && (
+            <>
+              <span className="mx-2 opacity-40">·</span>
+              <span dir="ltr">{selectedSection.course_code}</span>
+            </>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="space-y-3">
           <div className="skeleton h-10 w-full" />
@@ -264,7 +278,7 @@ export function GradesPage() {
         </div>
       ) : sections.length === 0 ? (
         <div className="panel p-8 text-center text-green/70">
-          لا توجد شعب مخصصة لك حالياً. تواصل مع مسؤول النظام.
+          لا توجد مواد مخصصة لك حالياً. تواصل مع مسؤول النظام.
         </div>
       ) : loadingStudents ? (
         <div className="space-y-3">
@@ -274,18 +288,36 @@ export function GradesPage() {
       ) : (
         <>
           <div className="panel scroll-hint hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[900px] text-sm">
+            <table className="w-full min-w-[720px] text-sm">
               <thead>
-                <tr className="bg-green text-butter">
-                  <th className="px-3 py-3.5 text-right font-bold">الرقم الجامعي</th>
-                  <th className="px-3 py-3.5 text-right font-bold">اسم الطالب</th>
+                <tr>
+                  <th className="bg-[#f8cbad] px-3 py-3 text-right font-bold text-black">
+                    الرقم الجامعي
+                    <span className="mt-0.5 block text-xs font-normal">Student Id</span>
+                  </th>
+                  <th className="bg-[#f8cbad] px-3 py-3 text-right font-bold text-black">
+                    اسم الطالب
+                    <span className="mt-0.5 block text-xs font-normal">Student Name</span>
+                  </th>
                   {GRADE_FIELDS.map((f) => (
-                    <th key={f.key} className="px-2 py-3.5 text-center font-bold">
+                    <th
+                      key={f.key}
+                      className={`px-2 py-3 text-center font-bold text-green ${
+                        f.key === 'coursework_score'
+                          ? 'bg-yellow-300'
+                          : f.key === 'midterm_score'
+                            ? 'bg-sky-200'
+                            : 'bg-orange-200'
+                      }`}
+                    >
                       {f.label}
                       <span className="block text-xs font-normal opacity-80">({f.max})</span>
                     </th>
                   ))}
-                  <th className="px-3 py-3.5 text-center font-bold">المجموع</th>
+                  <th className="bg-[#92d050] px-3 py-3 text-center font-bold text-red-600">
+                    المجموع
+                    <span className="block text-xs font-normal">(100)</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -294,16 +326,16 @@ export function GradesPage() {
                     key={student.id}
                     className={`table-row-hover ${idx % 2 === 0 ? 'bg-butter/30' : 'bg-white'}`}
                   >
-                    <td className="px-3 py-2 font-mono text-xs" dir="ltr">
+                    <td className="bg-[#f8cbad]/40 px-3 py-2 font-mono text-xs text-black" dir="ltr">
                       {student.university_id}
                     </td>
-                    <td className="px-3 py-2 whitespace-nowrap">{student.full_name}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-black">{student.full_name}</td>
                     {GRADE_FIELDS.map((field) => (
                       <td key={field.key} className="px-1 py-1 text-center">
                         {renderGradeInput(student, field)}
                       </td>
                     ))}
-                    <td className="px-3 py-2 text-center font-bold text-green">
+                    <td className="bg-[#92d050]/30 px-3 py-2 text-center font-bold text-green">
                       {calcTotal(student)}
                     </td>
                   </tr>
@@ -324,7 +356,7 @@ export function GradesPage() {
                     المجموع: {calcTotal(student)}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {GRADE_FIELDS.map((field) => (
                     <label key={field.key} className="block text-xs text-green/80">
                       <span className="mb-1 block font-medium">

@@ -12,7 +12,7 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (!loading && user && profile) {
-    return <Navigate to={profile.role === 'admin' ? '/admin' : '/instructor/grades'} replace />
+    return <Navigate to={profile.role === 'admin' ? '/admin' : '/instructor/courses'} replace />
   }
 
   const handleSubmit = async (e: FormEvent) => {

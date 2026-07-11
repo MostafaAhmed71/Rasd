@@ -57,7 +57,7 @@ function styleCell(
   }
 }
 
-const SHEET_COLUMN_WIDTHS = [14, 28, 18, 18, 9, 9, 9, 9, 12, 10, 10]
+const SHEET_COLUMN_WIDTHS = [16, 28, 18, 16, 16, 12]
 
 function getSheetWidthPx(widths: number[]): number {
   return widths.reduce((sum, width) => sum + Math.floor(width * 7 + 5), 0)
@@ -156,8 +156,8 @@ function addInfoGrid(
       rightValue: String(section.section_number),
       leftLabel: 'مدرس المقرر',
       leftValue: instructorName,
-      valueRed: true,
-      labelRed: true,
+      valueRed: false,
+      labelRed: false,
     },
   ]
 
@@ -166,7 +166,7 @@ function addInfoGrid(
     ws.getRow(rowNum).height = 30
 
     // يمين: التسمية (إنجليزي + عربي)
-    ws.mergeCells(`A${rowNum}:C${rowNum}`)
+    ws.mergeCells(`A${rowNum}:B${rowNum}`)
     const rightLabelCell = ws.getCell(`A${rowNum}`)
     rightLabelCell.value = row.rightLabel
     styleCell(rightLabelCell, {
@@ -176,8 +176,8 @@ function addInfoGrid(
     })
 
     // يمين: القيمة
-    ws.mergeCells(`D${rowNum}:F${rowNum}`)
-    const rightValueCell = ws.getCell(`D${rowNum}`)
+    ws.mergeCells(`C${rowNum}:D${rowNum}`)
+    const rightValueCell = ws.getCell(`C${rowNum}`)
     rightValueCell.value = row.rightValue
     styleCell(rightValueCell, {
       bold: row.valueRed,
@@ -186,35 +186,20 @@ function addInfoGrid(
     })
 
     // يسار: التسمية
-    ws.mergeCells(`G${rowNum}:I${rowNum}`)
-    const leftLabelCell = ws.getCell(`G${rowNum}`)
+    const leftLabelCell = ws.getCell(`E${rowNum}`)
     leftLabelCell.value = row.leftLabel
     styleCell(leftLabelCell, { bold: true, bg: COLORS.white })
 
     // يسار: القيمة
-    ws.mergeCells(`J${rowNum}:K${rowNum}`)
-    const leftValueCell = ws.getCell(`J${rowNum}`)
+    const leftValueCell = ws.getCell(`F${rowNum}`)
     leftValueCell.value = row.leftValue
     styleCell(leftValueCell, { bg: COLORS.white })
   })
 }
 
 function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], startRow: number) {
-  const groupRow = startRow
-  const headerRow = startRow + 1
-  const dataStart = startRow + 2
-
-  ws.mergeCells(`C${groupRow}:D${groupRow}`)
-  ws.getCell(`C${groupRow}`).value = 'التدريب الميداني'
-  styleCell(ws.getCell(`C${groupRow}`), { bold: true, bg: COLORS.yellow })
-
-  ws.mergeCells(`E${groupRow}:H${groupRow}`)
-  ws.getCell(`E${groupRow}`).value = 'تدريب المنصات'
-  styleCell(ws.getCell(`E${groupRow}`), { bold: true, bg: COLORS.periwinkle })
-
-  ;['A', 'B', 'I', 'J', 'K'].forEach((col) => {
-    ws.mergeCells(`${col}${groupRow}:${col}${headerRow}`)
-  })
+  const headerRow = startRow
+  const dataStart = startRow + 1
 
   const headers: {
     col: string
@@ -223,37 +208,25 @@ function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], sta
     bg: string
     titleRed?: boolean
   }[] = [
-    { col: 'A', title: 'الرقم الجامعي', bg: COLORS.peach, titleRed: true },
-    { col: 'B', title: 'اسم الطالب', bg: COLORS.lightBlue, titleRed: true },
-    { col: 'C', title: 'المشرف الميداني', weight: 40, bg: COLORS.yellow },
-    { col: 'D', title: 'المشرف الأكاديمي', weight: 10, bg: COLORS.yellow },
-    { col: 'E', title: 'الدورة 1', weight: 5, bg: COLORS.periwinkle },
-    { col: 'F', title: 'الدورة 2', weight: 5, bg: COLORS.periwinkle },
-    { col: 'G', title: 'الدورة 3', weight: 5, bg: COLORS.periwinkle },
-    { col: 'H', title: 'الدورة 4', weight: 5, bg: COLORS.periwinkle },
-    { col: 'I', title: 'كتابة التقرير', weight: 20, bg: COLORS.orange },
-    { col: 'J', title: 'مناقشة', weight: 10, bg: COLORS.orange },
-    { col: 'K', title: 'المجموع', weight: 100, bg: COLORS.green },
+    { col: 'A', title: 'الرقم الجامعي\nStudent Id', bg: COLORS.peach },
+    { col: 'B', title: 'اسم الطالب\nStudent Name', bg: COLORS.peach },
+    { col: 'C', title: 'مجموع أعمال السنة', weight: 40, bg: COLORS.yellow },
+    { col: 'D', title: 'الاختبار النصفي', weight: 20, bg: COLORS.lightBlue },
+    { col: 'E', title: 'الاختبار النهائي', weight: 40, bg: COLORS.orange },
+    { col: 'F', title: 'المجموع', weight: 100, bg: COLORS.green, titleRed: true },
   ]
 
   headers.forEach((h) => {
     const cell = ws.getCell(`${h.col}${headerRow}`)
-    const singleLine = h.col === 'C' || h.col === 'D'
-    cell.value = h.weight
-      ? singleLine
-        ? `${h.title} ${h.weight}`
-        : `${h.title}\n${h.weight}`
-      : h.title
+    cell.value = h.weight ? `${h.title}\n${h.weight}` : h.title
     styleCell(cell, {
       bold: true,
       bg: h.bg,
       color: h.titleRed ? COLORS.red : undefined,
-      align: singleLine ? { horizontal: 'center', vertical: 'middle', wrapText: false } : undefined,
     })
   })
 
-  ws.getRow(groupRow).height = 22
-  ws.getRow(headerRow).height = 28
+  ws.getRow(headerRow).height = 36
 
   const minRows = Math.max(students.length, 30)
   for (let i = 0; i < minRows; i++) {
@@ -265,14 +238,9 @@ function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], sta
     const values = [
       student?.university_id ?? '',
       student?.full_name ?? '',
-      g?.field_supervisor_score ?? '',
-      g?.academic_supervisor_score ?? '',
-      g?.platform_course_1 ?? '',
-      g?.platform_course_2 ?? '',
-      g?.platform_course_3 ?? '',
-      g?.platform_course_4 ?? '',
-      g?.report_writing_score ?? '',
-      g?.report_discussion_score ?? '',
+      g?.coursework_score ?? '',
+      g?.midterm_score ?? '',
+      g?.final_exam_score ?? '',
       g?.total_score ?? '',
     ]
 
@@ -281,13 +249,15 @@ function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], sta
       cell.value = val
       const colLetter = String.fromCharCode(65 + colIdx)
       let bg = COLORS.white
-      if (colLetter === 'A') bg = COLORS.peach
-      if (colLetter === 'B') bg = COLORS.lightBlue
-      if (colLetter === 'C' || colLetter === 'D') bg = COLORS.yellow
-      if (['E', 'F', 'G', 'H'].includes(colLetter)) bg = COLORS.periwinkle
-      if (colLetter === 'I' || colLetter === 'J') bg = COLORS.orange
-      if (colLetter === 'K') bg = COLORS.green
-      styleCell(cell, { bg, bold: colLetter === 'K' && val !== '' })
+      if (colLetter === 'A' || colLetter === 'B') bg = COLORS.peach
+      if (colLetter === 'C') bg = COLORS.yellow
+      if (colLetter === 'D') bg = COLORS.lightBlue
+      if (colLetter === 'E') bg = COLORS.orange
+      if (colLetter === 'F') bg = COLORS.green
+      styleCell(cell, {
+        bg,
+        bold: colLetter === 'F' && val !== '',
+      })
     })
     row.height = 20
   }

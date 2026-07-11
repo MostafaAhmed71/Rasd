@@ -35,14 +35,9 @@ export interface Student {
 
 export interface Grade {
   student_id: string
-  field_supervisor_score: number | null
-  academic_supervisor_score: number | null
-  platform_course_1: number | null
-  platform_course_2: number | null
-  platform_course_3: number | null
-  platform_course_4: number | null
-  report_writing_score: number | null
-  report_discussion_score: number | null
+  coursework_score: number | null
+  midterm_score: number | null
+  final_exam_score: number | null
   total_score: number | null
   updated_by: string | null
   updated_at: string
@@ -60,17 +55,28 @@ export interface StudentWithGrade extends Student {
 export const GRADE_FIELDS: {
   key: GradeField
   label: string
+  labelEn?: string
   max: number
-  group?: string
+  headerBg?: string
 }[] = [
-  { key: 'field_supervisor_score', label: 'المشرف الميداني', max: 40, group: 'supervisors' },
-  { key: 'academic_supervisor_score', label: 'المشرف الأكاديمي', max: 10, group: 'supervisors' },
-  { key: 'platform_course_1', label: 'دورة 1', max: 5, group: 'platform' },
-  { key: 'platform_course_2', label: 'دورة 2', max: 5, group: 'platform' },
-  { key: 'platform_course_3', label: 'دورة 3', max: 5, group: 'platform' },
-  { key: 'platform_course_4', label: 'دورة 4', max: 5, group: 'platform' },
-  { key: 'report_writing_score', label: 'كتابة التقرير', max: 20, group: 'report' },
-  { key: 'report_discussion_score', label: 'مناقشة التقرير', max: 10, group: 'report' },
+  {
+    key: 'coursework_score',
+    label: 'مجموع أعمال السنة',
+    max: 40,
+    headerBg: 'bg-yellow-300',
+  },
+  {
+    key: 'midterm_score',
+    label: 'الاختبار النصفي',
+    max: 20,
+    headerBg: 'bg-sky-200',
+  },
+  {
+    key: 'final_exam_score',
+    label: 'الاختبار النهائي',
+    max: 40,
+    headerBg: 'bg-orange-200',
+  },
 ]
 
 export interface ImportRow {

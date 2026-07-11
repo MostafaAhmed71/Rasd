@@ -9,6 +9,7 @@ import { parseImportFile } from '../lib/import'
 import { getSectionInstructorName, matchInstructorId } from '../lib/sections'
 import { supabase } from '../lib/supabase'
 import { AdminAbsencePanel } from './admin/AdminAbsencePanel'
+import { AdminCoursesPanel } from './admin/AdminCoursesPanel'
 import { AdminDocumentsPanel } from './admin/AdminDocumentsPanel'
 import type { Profile, Section, StudentWithGrade } from '../types/database'
 import { IMPORT_COLUMNS } from '../types/database'
@@ -21,7 +22,7 @@ interface SectionProgress {
 }
 
 export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'data' | 'documents' | 'absence'>('data')
+  const [activeTab, setActiveTab] = useState<'data' | 'courses' | 'documents' | 'absence'>('data')
   const [sections, setSections] = useState<SectionProgress[]>([])
   const [instructors, setInstructors] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
@@ -74,14 +75,17 @@ export function AdminDashboard() {
 
   const prevTabRef = useRef(activeTab)
   useEffect(() => {
-    if (activeTab === 'data' && prevTabRef.current !== 'data') {
+    if (
+      (activeTab === 'data' || activeTab === 'courses') &&
+      prevTabRef.current !== activeTab
+    ) {
       void loadData({ silent: true })
     }
     prevTabRef.current = activeTab
   }, [activeTab, loadData])
 
   useRefreshOnFocus(() => {
-    if (activeTab === 'data') void loadData({ silent: true })
+    if (activeTab === 'data' || activeTab === 'courses') void loadData({ silent: true })
   })
 
   const handleImport = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -254,6 +258,23 @@ export function AdminDashboard() {
       <AdminNav active={activeTab} onChange={setActiveTab} />
 
       {message && <Alert type={message.type}>{message.text}</Alert>}
+
+      {activeTab === 'courses' && (
+        <PageMotion key="courses">
+          {loading ? (
+            <p className="text-green/70">جاري التحميل...</p>
+          ) : (
+            <AdminCoursesPanel
+              sections={sections}
+              instructors={instructors}
+              onMessage={setMessage}
+              onReload={async () => {
+                await loadData({ silent: true })
+              }}
+            />
+          )}
+        </PageMotion>
+      )}
 
       {activeTab === 'documents' && (
         <PageMotion key="documents">

@@ -1,4 +1,4 @@
-type AdminTab = 'data' | 'documents' | 'absence'
+type AdminTab = 'data' | 'courses' | 'documents' | 'absence'
 
 interface AdminNavProps {
   active: AdminTab
@@ -7,6 +7,7 @@ interface AdminNavProps {
 
 const tabs: { id: AdminTab; label: string }[] = [
   { id: 'data', label: 'البيانات والدرجات' },
+  { id: 'courses', label: 'المواد' },
   { id: 'documents', label: 'المستندات' },
   { id: 'absence', label: 'طلبات الاعتذار' },
 ]

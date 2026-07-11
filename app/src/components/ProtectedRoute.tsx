@@ -38,7 +38,7 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   }
 
   if (allowedRoles && !allowedRoles.includes(profile.role)) {
-    const redirect = profile.role === 'admin' ? '/admin' : '/instructor/grades'
+    const redirect = profile.role === 'admin' ? '/admin' : '/instructor/courses'
     return <Navigate to={redirect} replace />
   }
 

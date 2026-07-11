@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 
 const tabs = [
+  { to: '/instructor/courses', label: 'موادي' },
   { to: '/instructor/grades', label: 'رصد الدرجات' },
   { to: '/instructor/supervision', label: 'جدول المراقبة' },
   { to: '/instructor/study', label: 'جدول الدراسة' },
