@@ -289,32 +289,23 @@ export function GradesPage() {
         <>
           <div className="panel scroll-hint hidden overflow-x-auto md:block">
             <table className="w-full min-w-[720px] text-sm">
-              <thead>
+              <thead className="table-head-dark">
                 <tr>
-                  <th className="bg-[#f8cbad] px-3 py-3 text-right font-bold text-black">
+                  <th className="px-3 py-3 text-right font-bold">
                     الرقم الجامعي
                     <span className="mt-0.5 block text-xs font-normal">Student Id</span>
                   </th>
-                  <th className="bg-[#f8cbad] px-3 py-3 text-right font-bold text-black">
+                  <th className="px-3 py-3 text-right font-bold">
                     اسم الطالب
                     <span className="mt-0.5 block text-xs font-normal">Student Name</span>
                   </th>
                   {GRADE_FIELDS.map((f) => (
-                    <th
-                      key={f.key}
-                      className={`px-2 py-3 text-center font-bold text-green ${
-                        f.key === 'coursework_score'
-                          ? 'bg-yellow-300'
-                          : f.key === 'midterm_score'
-                            ? 'bg-sky-200'
-                            : 'bg-orange-200'
-                      }`}
-                    >
+                    <th key={f.key} className="px-2 py-3 text-center font-bold">
                       {f.label}
                       <span className="block text-xs font-normal opacity-80">({f.max})</span>
                     </th>
                   ))}
-                  <th className="bg-[#92d050] px-3 py-3 text-center font-bold text-red-600">
+                  <th className="px-3 py-3 text-center font-bold">
                     المجموع
                     <span className="block text-xs font-normal">(100)</span>
                   </th>

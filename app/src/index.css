@@ -1,13 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-butter: #fffdf7;
-  --color-butter-dark: #f0ebe3;
-  --color-green: #306699;
-  --color-green-light: #285588;
-  --color-green-soft: #e8f0f7;
-  --font-sans: "Cairo", "Segoe UI", Tahoma, sans-serif;
-  --font-display: "IBM Plex Sans Arabic", "Cairo", sans-serif;
+  --color-primary-dark: #1b4332;
+  --color-primary: #2d6a4f;
+  --color-primary-light: #e8f3ee;
+  --color-bg-page: #f7f8f7;
+  --color-bg-card: #ffffff;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-warning-bg: #fdecc8;
+  --color-warning-text: #92400e;
+  --color-success-bg: #dcfce7;
+  --color-success-text: #166534;
+  --color-progress-low: #d97706;
+  --color-progress-high: #2563eb;
+  --color-danger-text: #dc2626;
+
+  /* توافق مع كلاسات موجودة في التطبيق */
+  --color-butter: #ffffff;
+  --color-butter-dark: #f7f8f7;
+  --color-green: #1b4332;
+  --color-green-light: #2d6a4f;
+  --color-green-soft: #e8f3ee;
+
+  --font-sans: "IBM Plex Sans Arabic", "Tajawal", "Cairo", "Segoe UI", Tahoma, sans-serif;
+  --font-display: "IBM Plex Sans Arabic", "Tajawal", "Cairo", sans-serif;
 }
 
 * {
@@ -23,8 +42,8 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-butter);
-  color: var(--color-green);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
   min-height: 100vh;
   min-height: 100dvh;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
@@ -59,10 +78,7 @@ input[type="number"] {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  background:
-    radial-gradient(ellipse 80% 50% at 100% -10%, rgb(48 102 153 / 12%), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 0% 100%, rgb(48 102 153 / 8%), transparent 50%),
-    linear-gradient(165deg, #fffdf7 0%, #f7f4ec 45%, #eef3f8 100%);
+  background: var(--color-bg-page);
 }
 
 .app-shell::before {
@@ -70,9 +86,9 @@ input[type="number"] {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(rgb(48 102 153 / 4%) 1px, transparent 1px);
-  background-size: 22px 22px;
-  opacity: 0.7;
+  background-image: radial-gradient(rgb(31 41 55 / 2%) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.55;
   z-index: 0;
 }
 
@@ -212,12 +228,11 @@ input[type="number"] {
 
 .panel {
   border-radius: 1rem;
-  background: rgb(255 255 255 / 92%);
-  border: 1px solid rgb(48 102 153 / 8%);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   box-shadow:
-    0 1px 2px rgb(48 102 153 / 4%),
-    0 8px 24px rgb(48 102 153 / 6%);
-  backdrop-filter: blur(8px);
+    0 1px 2px rgb(15 23 42 / 4%),
+    0 10px 20px rgb(15 23 42 / 5%);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -226,9 +241,9 @@ input[type="number"] {
 
 .panel:hover {
   box-shadow:
-    0 2px 4px rgb(48 102 153 / 6%),
-    0 12px 32px rgb(48 102 153 / 10%);
-  border-color: rgb(48 102 153 / 14%);
+    0 3px 6px rgb(15 23 42 / 6%),
+    0 14px 32px rgb(15 23 42 / 8%);
+  border-color: #d1d5db;
 }
 
 .btn-primary {
@@ -238,8 +253,8 @@ input[type="number"] {
   gap: 0.5rem;
   min-height: 2.75rem;
   border-radius: 0.75rem;
-  background: var(--color-green);
-  color: var(--color-butter);
+  background: var(--color-primary-dark);
+  color: #fff;
   font-weight: 600;
   padding: 0.625rem 1.25rem;
   border: none;
@@ -248,12 +263,12 @@ input[type="number"] {
     background 0.2s ease,
     transform 0.15s ease,
     box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgb(48 102 153 / 25%);
+  box-shadow: 0 2px 8px rgb(27 67 50 / 25%);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-green-light);
-  box-shadow: 0 4px 14px rgb(48 102 153 / 30%);
+  background: var(--color-primary);
+  box-shadow: 0 4px 14px rgb(27 67 50 / 30%);
   transform: translateY(-1px);
 }
 
@@ -273,9 +288,9 @@ input[type="number"] {
   justify-content: center;
   min-height: 2.75rem;
   border-radius: 0.75rem;
-  border: 1px solid rgb(48 102 153 / 18%);
+  border: 1px solid #d1d5db;
   background: white;
-  color: var(--color-green);
+  color: var(--color-primary-dark);
   font-weight: 600;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -286,8 +301,8 @@ input[type="number"] {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--color-green-soft);
-  border-color: rgb(48 102 153 / 30%);
+  background: var(--color-primary-light);
+  border-color: #9ca3af;
 }
 
 .btn-ghost:active:not(:disabled) {
@@ -298,10 +313,10 @@ input[type="number"] {
   width: 100%;
   min-height: 2.75rem;
   border-radius: 0.75rem;
-  border: 1px solid rgb(48 102 153 / 18%);
-  background: rgb(255 253 247 / 70%);
+  border: 1px solid var(--color-border);
+  background: #fff;
   padding: 0.625rem 0.875rem;
-  color: var(--color-green);
+  color: var(--color-text-primary);
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -310,39 +325,31 @@ input[type="number"] {
 }
 
 .field-input:hover {
-  border-color: rgb(48 102 153 / 30%);
+  border-color: #cbd5e1;
 }
 
 .field-input:focus {
-  border-color: var(--color-green);
+  border-color: var(--color-primary-dark);
   background: white;
-  box-shadow: 0 0 0 3px rgb(48 102 153 / 15%);
+  box-shadow: 0 0 0 3px rgb(45 106 79 / 16%);
 }
 
 .nav-tabs {
   display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-  margin-bottom: 1.5rem;
-  scrollbar-width: none;
-}
-
-.nav-tabs::-webkit-scrollbar {
-  display: none;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .nav-tab {
   position: relative;
-  flex-shrink: 0;
   min-height: 2.75rem;
-  border-radius: 9999px;
-  padding: 0.5rem 1.15rem;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   border: 1px solid transparent;
-  background: rgb(255 255 255 / 80%);
-  color: var(--color-green);
+  background: transparent;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition:
     background 0.2s ease,
@@ -353,21 +360,32 @@ input[type="number"] {
 }
 
 .nav-tab:hover {
-  background: white;
-  border-color: rgb(48 102 153 / 12%);
-  transform: translateY(-1px);
+  background: #f9fafb;
+  border-color: var(--color-border);
 }
 
 .nav-tab-active {
-  background: var(--color-green);
-  color: var(--color-butter);
-  box-shadow: 0 4px 14px rgb(48 102 153 / 28%);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  border-color: #d6e7dd;
+  font-weight: 700;
 }
 
 .nav-tab-active:hover {
-  background: var(--color-green-light);
-  border-color: transparent;
-  color: var(--color-butter);
+  background: #deeee5;
+  border-color: #c6ddcf;
+  color: var(--color-primary-dark);
+}
+
+.nav-tab-active::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.5rem;
+  top: calc(50% - 0.25rem);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-primary);
 }
 
 .alert {
@@ -378,9 +396,9 @@ input[type="number"] {
 }
 
 .alert-success {
-  background: rgb(48 102 153 / 10%);
-  color: var(--color-green);
-  border: 1px solid rgb(48 102 153 / 15%);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid #bbf7d0;
 }
 
 .alert-error {
@@ -395,17 +413,15 @@ input[type="number"] {
   overflow: hidden;
   border-radius: 1.25rem;
   background: white;
-  box-shadow:
-    0 4px 6px rgb(48 102 153 / 6%),
-    0 20px 48px rgb(48 102 153 / 12%);
+  box-shadow: 0 15px 40px rgb(15 23 42 / 14%);
   animation: scale-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .auth-header {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(145deg, #306699 0%, #285588 55%, #1e446e 100%);
-  color: var(--color-butter);
+  background: linear-gradient(145deg, #1b4332 0%, #2d6a4f 65%, #245741 100%);
+  color: #fff;
   padding: 2rem 1.5rem;
   text-align: center;
 }
@@ -417,7 +433,7 @@ input[type="number"] {
   width: 14rem;
   height: 14rem;
   border-radius: 50%;
-  background: rgb(255 253 247 / 10%);
+  background: rgb(255 255 255 / 10%);
 }
 
 .auth-header::before {
@@ -427,23 +443,86 @@ input[type="number"] {
   width: 10rem;
   height: 10rem;
   border-radius: 50%;
-  background: rgb(255 253 247 / 8%);
+  background: rgb(255 255 255 / 8%);
 }
 
 .page-header-bar {
   position: relative;
   z-index: 20;
-  background: linear-gradient(135deg, #306699 0%, #285588 100%);
-  color: var(--color-butter);
-  box-shadow: 0 4px 20px rgb(48 102 153 / 25%);
+  background: var(--color-primary-dark);
+  color: #fff;
+  box-shadow: 0 4px 20px rgb(27 67 50 / 22%);
+}
+
+.app-header {
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar-card {
+  border-radius: 0.95rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  padding: 0.85rem;
+}
+
+.sidebar-title {
+  margin: 0 0 0.7rem;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+
+.avatar-circle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.btn-danger {
+  border: 1px solid #fecaca;
+  background: #fff;
+  color: var(--color-danger-text);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.table-head-dark th {
+  background: var(--color-primary-dark) !important;
+  color: #fff !important;
+}
+
+.status-badge-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.status-badge-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgb(48 102 153 / 6%) 25%,
-    rgb(48 102 153 / 12%) 50%,
-    rgb(48 102 153 / 6%) 75%
+    rgb(31 41 55 / 5%) 25%,
+    rgb(31 41 55 / 9%) 50%,
+    rgb(31 41 55 / 5%) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.4s ease infinite;
@@ -454,8 +533,8 @@ input[type="number"] {
   .mobile-card {
     border-radius: 0.875rem;
     background: white;
-    border: 1px solid rgb(48 102 153 / 8%);
-    box-shadow: 0 2px 10px rgb(48 102 153 / 8%);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 10px rgb(15 23 42 / 8%);
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
@@ -471,7 +550,7 @@ input[type="number"] {
 }
 
 .table-row-hover:hover {
-  background: rgb(48 102 153 / 4%);
+  background: #f9fafb;
 }
 
 .status-dot {
@@ -485,4 +564,23 @@ input[type="number"] {
 
 .font-display {
   font-family: var(--font-display);
+}
+
+@media (min-width: 1024px) {
+  .layout-grid {
+    flex-direction: row-reverse;
+    align-items: flex-start;
+  }
+
+  .layout-grid aside {
+    width: 18rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 1rem;
+  }
+
+  .layout-grid main {
+    flex: 1;
+    min-width: 0;
+  }
 }

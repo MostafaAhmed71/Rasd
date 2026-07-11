@@ -15,6 +15,7 @@ const tabs: { id: AdminTab; label: string }[] = [
 export function AdminNav({ active, onChange }: AdminNavProps) {
   return (
     <nav className="nav-tabs animate-fade-up" aria-label="أقسام لوحة المسؤول">
+      <p className="sidebar-title">القائمة</p>
       {tabs.map((tab) => (
         <button
           key={tab.id}

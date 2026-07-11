@@ -11,6 +11,7 @@ const tabs = [
 export function InstructorNav() {
   return (
     <nav className="nav-tabs animate-fade-up" aria-label="أقسام لوحة عضو التدريس">
+      <p className="sidebar-title">القائمة</p>
       {tabs.map((tab) => (
         <NavLink
           key={tab.to}
