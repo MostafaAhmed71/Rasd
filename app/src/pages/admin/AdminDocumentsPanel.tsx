@@ -156,8 +156,8 @@ export function AdminDocumentsPanel({ instructors, onMessage }: AdminDocumentsPa
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[500px] text-sm">
-              <thead>
-                <tr className="border-b border-green/10 bg-butter/40 text-green">
+              <thead className="table-head-dark">
+                <tr className="border-b border-green/10 text-green">
                   <th className="px-3 py-2 text-right font-bold">عضو التدريس</th>
                   <th className="px-3 py-2 text-right font-bold">النوع</th>
                   <th className="px-3 py-2 text-right font-bold">الملف</th>

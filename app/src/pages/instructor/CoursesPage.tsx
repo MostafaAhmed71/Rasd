@@ -115,8 +115,8 @@ export function CoursesPage() {
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-green-soft">
                     <div
-                      className="h-full rounded-full bg-green transition-all"
-                      style={{ width: `${pct}%` }}
+                      className="h-full rounded-full transition-all"
+                      style={{ width: `${pct}%`, backgroundColor: pct < 60 ? '#D97706' : '#2563EB' }}
                     />
                   </div>
                 </div>

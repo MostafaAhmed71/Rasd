@@ -265,8 +265,8 @@ export function AdminCoursesPanel({
           <>
             <div className="scroll-hint hidden overflow-x-auto md:block">
               <table className="w-full min-w-[700px] text-sm">
-                <thead>
-                  <tr className="border-b border-green/10 bg-butter/40 text-green">
+                <thead className="table-head-dark">
+                  <tr className="border-b border-green/10 text-green">
                     <th className="px-3 py-2 text-right font-bold">الشعبة</th>
                     <th className="px-3 py-2 text-right font-bold">المقرر</th>
                     <th className="px-3 py-2 text-right font-bold">الرمز</th>

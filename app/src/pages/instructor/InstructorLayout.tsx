@@ -7,8 +7,7 @@ export function InstructorLayout() {
   const location = useLocation()
 
   return (
-    <Layout title="لوحة عضو التدريس">
-      <InstructorNav />
+    <Layout title="لوحة عضو هيئة التدريس" subtitle="إدارة المقررات والدرجات والطلبات" sidebar={<InstructorNav />}>
       <PageMotion key={location.pathname}>
         <Outlet />
       </PageMotion>

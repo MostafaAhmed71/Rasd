@@ -254,8 +254,11 @@ export function AdminDashboard() {
   }
 
   return (
-    <Layout title="لوحة مسؤول النظام">
-      <AdminNav active={activeTab} onChange={setActiveTab} />
+    <Layout
+      title="لوحة الإدارة"
+      subtitle="إدارة البيانات والمستندات وطلبات الاعتذار"
+      sidebar={<AdminNav active={activeTab} onChange={setActiveTab} />}
+    >
 
       {message && <Alert type={message.type}>{message.text}</Alert>}
 
@@ -345,8 +348,8 @@ export function AdminDashboard() {
           <>
             <div className="scroll-hint hidden overflow-x-auto md:block">
               <table className="w-full min-w-[600px] text-sm">
-              <thead>
-                <tr className="border-b border-green/10 bg-butter/40 text-green">
+              <thead className="table-head-dark">
+                <tr className="border-b border-green/10 text-green">
                   <th className="px-4 py-3 text-right font-bold">الرقم المرجعي</th>
                   <th className="px-4 py-3 text-right font-bold">رمز المقرر</th>
                   <th className="px-4 py-3 text-right font-bold">المقرر</th>
@@ -376,8 +379,11 @@ export function AdminDashboard() {
                           </span>
                           <div className="h-2 w-24 overflow-hidden rounded-full bg-butter">
                             <div
-                              className="h-full rounded-full bg-green transition-all"
-                              style={{ width: `${pct}%` }}
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${pct}%`,
+                                backgroundColor: pct < 60 ? '#D97706' : '#2563EB',
+                              }}
                             />
                           </div>
                           <span className="text-xs text-green/60">{pct}%</span>
@@ -443,8 +449,11 @@ export function AdminDashboard() {
                         </dd>
                         <div className="mt-1 h-2 overflow-hidden rounded-full bg-butter">
                           <div
-                            className="h-full rounded-full bg-green transition-all"
-                            style={{ width: `${pct}%` }}
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${pct}%`,
+                              backgroundColor: pct < 60 ? '#D97706' : '#2563EB',
+                            }}
                           />
                         </div>
                       </div>

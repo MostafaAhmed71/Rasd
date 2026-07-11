@@ -221,7 +221,7 @@ export function AdminAbsencePanel({ onMessage }: AdminAbsencePanelProps) {
                       type="button"
                       onClick={() => handleReview(req.id, 'rejected')}
                       disabled={busyId === req.id}
-                      className="btn-ghost border-red-200 text-red-700 hover:bg-red-50"
+                      className="btn-ghost btn-danger"
                     >
                       رفض
                     </button>
