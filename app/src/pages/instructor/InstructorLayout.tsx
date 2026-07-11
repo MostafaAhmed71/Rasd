@@ -1,17 +1,14 @@
-import { Outlet, useLocation } from 'react-router-dom'
-import { InstructorNav } from '../../components/InstructorNav'
-import { Layout } from '../../components/Layout'
-import { PageMotion } from '../../components/PageMotion'
+import { AppShell, type NavItem } from '../../components/AppShell'
+
+const NAV: NavItem[] = [
+  { to: '/instructor/courses', label: 'المواد الدراسية' },
+  { to: '/instructor/grades', label: 'رصد الدرجات' },
+  { to: '/instructor/study', label: 'جدول عضو هيئة التدريس' },
+  { to: '/instructor/supervision', label: 'جدول المراقبة' },
+  { to: '/instructor/absence', label: 'تقديم طلب اعتذار' },
+  { to: '/instructor/tasks', label: 'مهام أخرى' },
+]
 
 export function InstructorLayout() {
-  const location = useLocation()
-
-  return (
-    <Layout title="لوحة عضو التدريس">
-      <InstructorNav />
-      <PageMotion key={location.pathname}>
-        <Outlet />
-      </PageMotion>
-    </Layout>
-  )
+  return <AppShell title="المواد الدراسية" navItems={NAV} />
 }

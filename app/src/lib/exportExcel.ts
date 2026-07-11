@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs'
 import type { Section, StudentWithGrade } from '../types/database'
+import { getGradeFields } from '../types/database'
 
 export interface SectionExportData {
   section: Section
@@ -197,27 +198,34 @@ function addInfoGrid(
   })
 }
 
-function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], startRow: number) {
+function addGradesTable(
+  ws: ExcelJS.Worksheet,
+  students: StudentWithGrade[],
+  startRow: number,
+  section: Section,
+) {
   const headerRow = startRow
   const dataStart = startRow + 1
+  const fields = getGradeFields(section.course_type)
+  const colCount = 2 + fields.length + 1
 
-  const headers: {
-    col: string
-    title: string
-    weight?: number
-    bg: string
-    titleRed?: boolean
-  }[] = [
-    { col: 'A', title: 'الرقم الجامعي\nStudent Id', bg: COLORS.peach },
-    { col: 'B', title: 'اسم الطالب\nStudent Name', bg: COLORS.peach },
-    { col: 'C', title: 'مجموع أعمال السنة', weight: 40, bg: COLORS.yellow },
-    { col: 'D', title: 'الاختبار النصفي', weight: 20, bg: COLORS.lightBlue },
-    { col: 'E', title: 'الاختبار النهائي', weight: 40, bg: COLORS.orange },
-    { col: 'F', title: 'المجموع', weight: 100, bg: COLORS.green, titleRed: true },
+  // expand columns for field training
+  const widths = [16, 28, ...fields.map(() => 14), 12]
+  ws.columns = widths.map((width) => ({ width }))
+
+  const headers: { title: string; weight?: number; bg: string; titleRed?: boolean }[] = [
+    { title: 'الرقم الجامعي\nStudent Id', bg: COLORS.peach },
+    { title: 'اسم الطالب\nStudent Name', bg: COLORS.peach },
+    ...fields.map((f, i) => ({
+      title: f.label,
+      weight: f.max,
+      bg: [COLORS.yellow, COLORS.lightBlue, COLORS.orange, COLORS.periwinkle][i % 4],
+    })),
+    { title: 'المجموع', weight: 100, bg: COLORS.green, titleRed: true },
   ]
 
-  headers.forEach((h) => {
-    const cell = ws.getCell(`${h.col}${headerRow}`)
+  headers.forEach((h, idx) => {
+    const cell = ws.getCell(headerRow, idx + 1)
     cell.value = h.weight ? `${h.title}\n${h.weight}` : h.title
     styleCell(cell, {
       bold: true,
@@ -235,28 +243,23 @@ function addGradesTable(ws: ExcelJS.Worksheet, students: StudentWithGrade[], sta
     const g = student?.grades
     const row = ws.getRow(rowNum)
 
-    const values = [
+    const values: (string | number)[] = [
       student?.university_id ?? '',
       student?.full_name ?? '',
-      g?.coursework_score ?? '',
-      g?.midterm_score ?? '',
-      g?.final_exam_score ?? '',
+      ...fields.map((f) => (g?.[f.key] as number | null) ?? ''),
       g?.total_score ?? '',
     ]
 
     values.forEach((val, colIdx) => {
       const cell = row.getCell(colIdx + 1)
       cell.value = val
-      const colLetter = String.fromCharCode(65 + colIdx)
       let bg = COLORS.white
-      if (colLetter === 'A' || colLetter === 'B') bg = COLORS.peach
-      if (colLetter === 'C') bg = COLORS.yellow
-      if (colLetter === 'D') bg = COLORS.lightBlue
-      if (colLetter === 'E') bg = COLORS.orange
-      if (colLetter === 'F') bg = COLORS.green
+      if (colIdx === 0 || colIdx === 1) bg = COLORS.peach
+      else if (colIdx === colCount - 1) bg = COLORS.green
+      else bg = headers[colIdx]?.bg ?? COLORS.white
       styleCell(cell, {
         bg,
-        bold: colLetter === 'F' && val !== '',
+        bold: colIdx === colCount - 1 && val !== '',
       })
     })
     row.height = 20
@@ -277,7 +280,7 @@ async function addSectionSheet(
   addInfoGrid(ws, section, instructorName, infoStartRow, termFallback)
 
   const gradesStartRow = infoStartRow + 4
-  addGradesTable(ws, students, gradesStartRow)
+  addGradesTable(ws, students, gradesStartRow, section)
 
   ws.views = [{ rightToLeft: true }]
 }

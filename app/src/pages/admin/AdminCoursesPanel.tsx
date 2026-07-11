@@ -1,7 +1,8 @@
 import { type FormEvent, useState } from 'react'
 import { getSectionInstructorName } from '../../lib/sections'
 import { supabase } from '../../lib/supabase'
-import type { Profile, Section } from '../../types/database'
+import type { CourseType, Profile, Section } from '../../types/database'
+import { COURSE_TYPE_LABELS } from '../../types/database'
 
 interface SectionProgress {
   section: Section
@@ -25,6 +26,7 @@ interface CourseForm {
   instructor_name: string
   term: string
   program: string
+  course_type: CourseType
 }
 
 const emptyForm = (): CourseForm => ({
@@ -35,6 +37,7 @@ const emptyForm = (): CourseForm => ({
   instructor_name: '',
   term: '',
   program: '',
+  course_type: 'regular',
 })
 
 export function AdminCoursesPanel({
@@ -65,6 +68,7 @@ export function AdminCoursesPanel({
       instructor_name: section.instructor_name ?? '',
       term: section.term ?? '',
       program: section.program ?? '',
+      course_type: section.course_type ?? 'regular',
     })
     setShowForm(true)
   }
@@ -108,6 +112,7 @@ export function AdminCoursesPanel({
       instructor_name: form.instructor_name.trim() || null,
       term: form.term.trim() || null,
       program: form.program.trim() || null,
+      course_type: form.course_type,
     }
 
     const { error } = editingId
@@ -221,6 +226,22 @@ export function AdminCoursesPanel({
                   onChange={(e) => setForm((p) => ({ ...p, program: e.target.value }))}
                   className="field-input mt-1"
                 />
+              </label>
+              <label className="block text-sm text-green">
+                نوع المقرر
+                <select
+                  value={form.course_type}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, course_type: e.target.value as CourseType }))
+                  }
+                  className="field-input mt-1"
+                >
+                  {(Object.keys(COURSE_TYPE_LABELS) as CourseType[]).map((key) => (
+                    <option key={key} value={key}>
+                      {COURSE_TYPE_LABELS[key]}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="block text-sm text-green">
                 ربط حساب المدرّس

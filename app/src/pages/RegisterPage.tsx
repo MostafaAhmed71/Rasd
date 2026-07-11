@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { Alert } from '../components/Alert'
 import { useAuth } from '../contexts/AuthContext'
 import { PLATFORM_COLLEGE, PLATFORM_NAME, PLATFORM_ORG } from '../lib/brand'
+import { homePathForRole } from '../lib/roles'
 
 export function RegisterPage() {
   const { signUp, user, profile, loading } = useAuth()
@@ -15,7 +16,7 @@ export function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (!loading && user && profile) {
-    return <Navigate to={profile.role === 'admin' ? '/admin' : '/instructor/courses'} replace />
+    return <Navigate to={homePathForRole(profile.role)} replace />
   }
 
   const handleSubmit = async (e: FormEvent) => {

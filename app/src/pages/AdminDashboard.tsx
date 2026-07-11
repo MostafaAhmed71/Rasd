@@ -1,8 +1,6 @@
 import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { AdminNav } from '../components/AdminNav'
 import { Alert } from '../components/Alert'
-import { Layout } from '../components/Layout'
-import { PageMotion } from '../components/PageMotion'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
 import { downloadBlob, exportGradesToExcel } from '../lib/exportExcel'
 import { parseImportFile } from '../lib/import'
@@ -254,15 +252,21 @@ export function AdminDashboard() {
   }
 
   return (
-    <Layout title="لوحة مسؤول النظام">
+    <div className="space-y-4">
+      <div>
+        <h2 className="font-display text-xl font-bold text-primary-dark">إدارة النظام</h2>
+        <p className="mt-1 text-sm text-text-secondary">
+          استيراد البيانات، المواد، المستندات، وطلبات الاعتذار
+        </p>
+      </div>
       <AdminNav active={activeTab} onChange={setActiveTab} />
 
       {message && <Alert type={message.type}>{message.text}</Alert>}
 
       {activeTab === 'courses' && (
-        <PageMotion key="courses">
+        <div key="courses">
           {loading ? (
-            <p className="text-green/70">جاري التحميل...</p>
+            <p className="text-text-secondary">جاري التحميل...</p>
           ) : (
             <AdminCoursesPanel
               sections={sections}
@@ -273,23 +277,23 @@ export function AdminDashboard() {
               }}
             />
           )}
-        </PageMotion>
+        </div>
       )}
 
       {activeTab === 'documents' && (
-        <PageMotion key="documents">
+        <div key="documents">
           <AdminDocumentsPanel instructors={instructors} onMessage={setMessage} />
-        </PageMotion>
+        </div>
       )}
 
       {activeTab === 'absence' && (
-        <PageMotion key="absence">
+        <div key="absence">
           <AdminAbsencePanel onMessage={setMessage} />
-        </PageMotion>
+        </div>
       )}
 
       {activeTab === 'data' && (
-        <PageMotion key="data">
+        <div key="data">
       <div className="mb-8 grid gap-4 lg:grid-cols-2">
         <div className="panel animate-fade-up stagger-1 p-4 sm:p-6">
           <h2 className="font-display mb-2 text-lg font-bold text-green">استيراد بيانات الطلاب</h2>
@@ -474,15 +478,15 @@ export function AdminDashboard() {
         )}
       </div>
 
-      <div className="mt-6 rounded-xl border border-green/10 bg-green-soft/60 p-4 text-sm text-green/80 animate-fade-up">
+      <div className="mt-6 rounded-xl border border-border bg-primary-light/60 p-4 text-sm text-text-secondary animate-fade-up">
         <strong>ملاحظة:</strong> لإضافة أعضاء تدريس جدد، أنشئ حساباتهم من لوحة Supabase (Authentication
         → Users) مع تحديد الدور في metadata:{' '}
         <code className="rounded bg-white px-1" dir="ltr">
           {`{"role": "instructor", "full_name": "اسم المدرّس"}`}
         </code>
       </div>
-        </PageMotion>
+        </div>
       )}
-    </Layout>
+    </div>
   )
 }

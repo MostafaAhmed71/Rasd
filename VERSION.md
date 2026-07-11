@@ -1,13 +1,12 @@
-Version: v1.5.1
-Date: 2026-07-11
+Version: v1.6.2
+Date: 2026-07-12
 
 Changes
-- إعادة تسمية «جدول الدراسة» إلى «جدول عضو هيئة التدريس» في التنقل وعناوين المستندات ولوحة الأدمن
+- إعادة تسمية «الجدول الدراسي» إلى «جدول عضو هيئة التدريس»
 
 Files Modified
-- app/src/components/InstructorNav.tsx
+- app/src/pages/instructor/InstructorLayout.tsx
 - app/src/types/database.ts
-- app/src/pages/admin/AdminDocumentsPanel.tsx
 - VERSION.md
 
-Previous: v1.5.0
+Previous: v1.6.1

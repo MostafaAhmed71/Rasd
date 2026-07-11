@@ -1,10 +1,24 @@
-export type UserRole = 'admin' | 'instructor'
+export type UserRole =
+  | 'instructor'
+  | 'program_coordinator'
+  | 'executive_director'
+  | 'admin' // legacy — treated as executive_director
+
+export type CourseType = 'regular' | 'field_training'
 
 export interface Profile {
   id: string
   full_name: string | null
   role: UserRole
   created_at: string
+}
+
+export interface Program {
+  id: string
+  name: string
+  coordinator_id: string | null
+  created_at: string
+  profiles?: { full_name: string | null } | null
 }
 
 export interface Section {
@@ -14,8 +28,10 @@ export interface Section {
   instructor_name: string | null
   term: string | null
   program: string | null
+  program_id: string | null
   course_title: string | null
   course_code: string | null
+  course_type: CourseType | null
   created_at: string
   profiles?: { full_name: string | null } | null
 }
@@ -38,6 +54,14 @@ export interface Grade {
   coursework_score: number | null
   midterm_score: number | null
   final_exam_score: number | null
+  field_supervisor_score: number | null
+  academic_supervisor_score: number | null
+  platform_course_1: number | null
+  platform_course_2: number | null
+  platform_course_3: number | null
+  platform_course_4: number | null
+  report_writing_score: number | null
+  report_discussion_score: number | null
   total_score: number | null
   updated_by: string | null
   updated_at: string
@@ -52,32 +76,37 @@ export interface StudentWithGrade extends Student {
   grades: Grade | null
 }
 
-export const GRADE_FIELDS: {
+export const REGULAR_GRADE_FIELDS: {
   key: GradeField
   label: string
-  labelEn?: string
   max: number
-  headerBg?: string
 }[] = [
-  {
-    key: 'coursework_score',
-    label: 'مجموع أعمال السنة',
-    max: 40,
-    headerBg: 'bg-yellow-300',
-  },
-  {
-    key: 'midterm_score',
-    label: 'الاختبار النصفي',
-    max: 20,
-    headerBg: 'bg-sky-200',
-  },
-  {
-    key: 'final_exam_score',
-    label: 'الاختبار النهائي',
-    max: 40,
-    headerBg: 'bg-orange-200',
-  },
+  { key: 'coursework_score', label: 'أعمال السنة', max: 40 },
+  { key: 'midterm_score', label: 'نصفي', max: 20 },
+  { key: 'final_exam_score', label: 'نهائي', max: 40 },
 ]
+
+export const FIELD_TRAINING_GRADE_FIELDS: {
+  key: GradeField
+  label: string
+  max: number
+}[] = [
+  { key: 'field_supervisor_score', label: 'المشرف الميداني', max: 40 },
+  { key: 'academic_supervisor_score', label: 'المشرف الأكاديمي', max: 10 },
+  { key: 'platform_course_1', label: 'دورة 1', max: 5 },
+  { key: 'platform_course_2', label: 'دورة 2', max: 5 },
+  { key: 'platform_course_3', label: 'دورة 3', max: 5 },
+  { key: 'platform_course_4', label: 'دورة 4', max: 5 },
+  { key: 'report_writing_score', label: 'كتابة التقرير', max: 20 },
+  { key: 'report_discussion_score', label: 'مناقشة التقرير', max: 10 },
+]
+
+/** @deprecated use REGULAR_GRADE_FIELDS or getGradeFields(courseType) */
+export const GRADE_FIELDS = REGULAR_GRADE_FIELDS
+
+export function getGradeFields(courseType: CourseType | null | undefined) {
+  return courseType === 'field_training' ? FIELD_TRAINING_GRADE_FIELDS : REGULAR_GRADE_FIELDS
+}
 
 export interface ImportRow {
   university_id: string
@@ -91,7 +120,6 @@ export interface ImportRow {
   section_number: number
 }
 
-/** أعمدة ملف الاستيراد بالترتيب (كما في الشيت الأصلي) */
 export const IMPORT_COLUMNS = [
   'اسم الطالب',
   'الرقم الجامعي',
@@ -105,6 +133,7 @@ export const IMPORT_COLUMNS = [
 ] as const
 
 export type DocumentType = 'supervision' | 'study'
+export type ScheduleType = 'study' | 'supervision'
 
 export interface InstructorDocument {
   id: string
@@ -113,6 +142,34 @@ export interface InstructorDocument {
   file_path: string
   file_name: string
   uploaded_by: string | null
+  created_at: string
+}
+
+export interface ScheduleEntry {
+  id: string
+  instructor_id: string
+  schedule_type: ScheduleType
+  day_label: string | null
+  entry_date: string | null
+  time_label: string | null
+  room: string | null
+  course_code: string | null
+  course_title: string | null
+  section_number: string | null
+  units: string | null
+  workload: string | null
+  first_proctor: string | null
+  second_proctor: string | null
+  source_file_name: string | null
+  uploaded_at: string | null
+  created_at: string
+}
+
+export interface GeneralTask {
+  id: string
+  instructor_id: string
+  title: string
+  is_done: boolean
   created_at: string
 }
 
@@ -175,5 +232,10 @@ export const LECTURE_MODE_LABELS: Record<LectureMode, string> = {
 
 export const APOLOGY_TYPE_LABELS: Record<ApologyType, string> = {
   remote_delivery: 'تقديم المحاضرة عن بُعد',
-  full_absence: 'الاعتذار عن المحاضرة نهائياً',
+  full_absence: 'الاعتذار نهائيًا',
+}
+
+export const COURSE_TYPE_LABELS: Record<CourseType, string> = {
+  regular: 'مقرر عادي',
+  field_training: 'تدريب ميداني',
 }
