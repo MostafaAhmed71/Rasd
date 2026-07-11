@@ -1,14 +1,14 @@
-Version: v1.6.3
+Version: v1.6.4
 Date: 2026-07-12
 
 Changes
-- إضافة فترة تجريبية لمدة 3 أيام ثم قفل التطبيق مع رسالة التواصل مع المطور مصطفى أحمد 0543641209
+- شريط فترة تجريبية احترافي مع عدّ تنازلي حي (أيام/ساعات/دقائق/ثوان) في الدخول والشاشات الداخلية
 
 Files Modified
-- app/src/lib/trial.ts
-- app/src/components/TrialGate.tsx
-- app/src/App.tsx
-- app/.env.example
+- app/src/hooks/useTrialCountdown.ts
+- app/src/components/TrialBanner.tsx
+- app/src/components/AppShell.tsx
+- app/src/pages/LoginPage.tsx
 - VERSION.md
 
-Previous: v1.6.2
+Previous: v1.6.3

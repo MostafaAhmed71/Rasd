@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { PLATFORM_NAME, PLATFORM_SHORT_NAME } from '../lib/brand'
 import { ROLE_LABELS } from '../lib/roles'
 import { PageMotion } from './PageMotion'
+import { TrialBanner } from './TrialBanner'
 import { Avatar } from './ui/Avatar'
 
 export interface NavItem {
@@ -28,6 +29,7 @@ export function AppShell({ title, subtitle, navItems, children }: AppShellProps)
 
   return (
     <div className="app-shell flex min-h-dvh flex-col">
+      <TrialBanner />
       <header className="page-header-bar shrink-0">
         <div className="px-4 py-3 sm:px-6">
           <h1 className="font-display text-base font-bold text-white sm:text-lg">{title}</h1>
@@ -78,7 +80,7 @@ export function AppShell({ title, subtitle, navItems, children }: AppShellProps)
         )}
 
         <aside
-          className={`fixed inset-y-0 right-0 z-40 flex w-64 flex-col border-l border-border bg-white pt-[7.5rem] transition-transform lg:static lg:z-0 lg:w-56 lg:shrink-0 lg:translate-x-0 lg:pt-0 ${
+          className={`fixed inset-y-0 right-0 z-40 flex w-64 flex-col border-l border-border bg-white pt-[11rem] transition-transform lg:static lg:z-0 lg:w-56 lg:shrink-0 lg:translate-x-0 lg:pt-0 ${
             sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
           }`}
         >

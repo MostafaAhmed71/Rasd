@@ -5,6 +5,7 @@ import { Avatar } from '../components/ui/Avatar'
 import { useAuth } from '../contexts/AuthContext'
 import { PLATFORM_COLLEGE, PLATFORM_NAME, PLATFORM_ORG } from '../lib/brand'
 import { homePathForRole, ROLE_LABELS } from '../lib/roles'
+import { TrialBanner } from '../components/TrialBanner'
 
 const DEMO_MODE = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true'
 
@@ -65,7 +66,9 @@ export function LoginPage() {
 
   return (
     <div className="login-shell">
-      <div className="auth-card">
+      <div className="w-full max-w-md">
+        <TrialBanner compact />
+        <div className="auth-card">
         <div className="auth-header">
           <p className="relative z-10 text-xs font-medium text-white/70">{PLATFORM_ORG}</p>
           <h1 className="font-display relative z-10 mt-2 text-2xl font-bold leading-snug">
@@ -150,6 +153,7 @@ export function LoginPage() {
             </Link>
           </p>
         </form>
+        </div>
       </div>
     </div>
   )
