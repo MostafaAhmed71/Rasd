@@ -1,12 +1,14 @@
-Version: v1.6.2
+Version: v1.6.3
 Date: 2026-07-12
 
 Changes
-- إعادة تسمية «الجدول الدراسي» إلى «جدول عضو هيئة التدريس»
+- إضافة فترة تجريبية لمدة 3 أيام ثم قفل التطبيق مع رسالة التواصل مع المطور مصطفى أحمد 0543641209
 
 Files Modified
-- app/src/pages/instructor/InstructorLayout.tsx
-- app/src/types/database.ts
+- app/src/lib/trial.ts
+- app/src/components/TrialGate.tsx
+- app/src/App.tsx
+- app/.env.example
 - VERSION.md
 
-Previous: v1.6.1
+Previous: v1.6.2
