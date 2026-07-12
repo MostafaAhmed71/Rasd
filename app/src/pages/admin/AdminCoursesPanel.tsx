@@ -1,7 +1,7 @@
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { getSectionInstructorName } from '../../lib/sections'
 import { supabase } from '../../lib/supabase'
-import type { CourseType, Profile, Section } from '../../types/database'
+import type { CourseType, Profile, Program, Section } from '../../types/database'
 import { COURSE_TYPE_LABELS } from '../../types/database'
 
 interface SectionProgress {
@@ -26,6 +26,7 @@ interface CourseForm {
   instructor_name: string
   term: string
   program: string
+  program_id: string
   course_type: CourseType
 }
 
@@ -37,6 +38,7 @@ const emptyForm = (): CourseForm => ({
   instructor_name: '',
   term: '',
   program: '',
+  program_id: '',
   course_type: 'regular',
 })
 
@@ -51,6 +53,15 @@ export function AdminCoursesPanel({
   const [form, setForm] = useState<CourseForm>(emptyForm())
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [programs, setPrograms] = useState<Program[]>([])
+
+  useEffect(() => {
+    void supabase
+      .from('programs')
+      .select('*')
+      .order('name')
+      .then(({ data }) => setPrograms((data as Program[]) ?? []))
+  }, [])
 
   const openCreate = () => {
     setEditingId(null)
@@ -68,6 +79,7 @@ export function AdminCoursesPanel({
       instructor_name: section.instructor_name ?? '',
       term: section.term ?? '',
       program: section.program ?? '',
+      program_id: section.program_id ?? '',
       course_type: section.course_type ?? 'regular',
     })
     setShowForm(true)
@@ -112,6 +124,7 @@ export function AdminCoursesPanel({
       instructor_name: form.instructor_name.trim() || null,
       term: form.term.trim() || null,
       program: form.program.trim() || null,
+      program_id: form.program_id || null,
       course_type: form.course_type,
     }
 
@@ -226,6 +239,21 @@ export function AdminCoursesPanel({
                   onChange={(e) => setForm((p) => ({ ...p, program: e.target.value }))}
                   className="field-input mt-1"
                 />
+              </label>
+              <label className="block text-sm text-green">
+                ربط ببرنامج (للمنسق)
+                <select
+                  value={form.program_id}
+                  onChange={(e) => setForm((p) => ({ ...p, program_id: e.target.value }))}
+                  className="field-input mt-1"
+                >
+                  <option value="">— بدون برنامج —</option>
+                  {programs.map((prog) => (
+                    <option key={prog.id} value={prog.id}>
+                      {prog.name}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="block text-sm text-green">
                 نوع المقرر

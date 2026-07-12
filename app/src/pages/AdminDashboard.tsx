@@ -1,12 +1,11 @@
 import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { AdminNav } from '../components/AdminNav'
+import { AdminNav, type AdminTab } from '../components/AdminNav'
 import { Alert } from '../components/Alert'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
 import { downloadBlob, exportGradesToExcel } from '../lib/exportExcel'
 import { parseImportFile } from '../lib/import'
 import { getSectionInstructorName, matchInstructorId } from '../lib/sections'
 import { supabase } from '../lib/supabase'
-import { AdminAbsencePanel } from './admin/AdminAbsencePanel'
 import { AdminCoursesPanel } from './admin/AdminCoursesPanel'
 import { AdminDocumentsPanel } from './admin/AdminDocumentsPanel'
 import type { Profile, Section, StudentWithGrade } from '../types/database'
@@ -20,7 +19,7 @@ interface SectionProgress {
 }
 
 export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'data' | 'courses' | 'documents' | 'absence'>('data')
+  const [activeTab, setActiveTab] = useState<AdminTab>('data')
   const [sections, setSections] = useState<SectionProgress[]>([])
   const [instructors, setInstructors] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
@@ -283,12 +282,6 @@ export function AdminDashboard() {
       {activeTab === 'documents' && (
         <div key="documents">
           <AdminDocumentsPanel instructors={instructors} onMessage={setMessage} />
-        </div>
-      )}
-
-      {activeTab === 'absence' && (
-        <div key="absence">
-          <AdminAbsencePanel onMessage={setMessage} />
         </div>
       )}
 

@@ -94,6 +94,9 @@ export function ExecutiveOverviewPage() {
         <Link to="/executive/programs" className="btn-secondary text-sm">
           كل البرامج وتعيين المنسقين
         </Link>
+        <Link to="/executive/absence-stats" className="btn-secondary text-sm">
+          إحصائيات الاعتذار
+        </Link>
       </div>
 
       {error && <Alert type="error">{error}</Alert>}

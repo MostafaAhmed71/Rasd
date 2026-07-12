@@ -11,13 +11,13 @@ const DEMO_MODE = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'tru
 
 const DEMO_ACCOUNTS = [
   {
-    label: 'مها عياد العنزي',
+    label: 'د. خلف الشمري',
     role: 'executive_director' as const,
     email: 'Maha01@g.com',
     password: '123456789',
   },
   {
-    label: 'مها عياد',
+    label: 'مها العنزي',
     role: 'program_coordinator' as const,
     email: 'Maha02@g.com',
     password: '123456789',
@@ -31,7 +31,7 @@ const DEMO_ACCOUNTS = [
 ]
 
 export function LoginPage() {
-  const { signIn, user, profile, loading } = useAuth()
+  const { signIn, signOut, user, profile, loading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -55,6 +55,7 @@ export function LoginPage() {
     setSubmitting(true)
     setEmail(demoEmail)
     setPassword(demoPassword)
+    await signOut()
     const result = await signIn(demoEmail, demoPassword)
     if (result.error) {
       setError(

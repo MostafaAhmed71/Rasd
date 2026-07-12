@@ -1,14 +1,12 @@
-Version: v1.6.4
+Version: v1.7.1
 Date: 2026-07-12
 
 Changes
-- شريط فترة تجريبية احترافي مع عدّ تنازلي حي (أيام/ساعات/دقائق/ثوان) في الدخول والشاشات الداخلية
+- تحديث أسماء الحسابات التجريبية: د. خلف الشمري (مدير)، مها العنزي (منسقة)، د. مها عياد (عضو تدريس)
 
 Files Modified
-- app/src/hooks/useTrialCountdown.ts
-- app/src/components/TrialBanner.tsx
-- app/src/components/AppShell.tsx
 - app/src/pages/LoginPage.tsx
+- supabase/migrations/010_demo_program_wiring.sql
 - VERSION.md
 
-Previous: v1.6.3
+Previous: v1.7.0

@@ -1,4 +1,4 @@
-type AdminTab = 'data' | 'courses' | 'documents' | 'absence'
+type AdminTab = 'data' | 'courses' | 'documents'
 
 interface AdminNavProps {
   active: AdminTab
@@ -8,13 +8,12 @@ interface AdminNavProps {
 const tabs: { id: AdminTab; label: string }[] = [
   { id: 'data', label: 'البيانات والدرجات' },
   { id: 'courses', label: 'المواد' },
-  { id: 'documents', label: 'المستندات' },
-  { id: 'absence', label: 'طلبات الاعتذار' },
+  { id: 'documents', label: 'المستندات / الجداول' },
 ]
 
 export function AdminNav({ active, onChange }: AdminNavProps) {
   return (
-    <nav className="nav-tabs animate-fade-up" aria-label="أقسام لوحة المسؤول">
+    <nav className="nav-tabs animate-fade-up" aria-label="أقسام إدارة النظام">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -28,3 +27,5 @@ export function AdminNav({ active, onChange }: AdminNavProps) {
     </nav>
   )
 }
+
+export type { AdminTab }

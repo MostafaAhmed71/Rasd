@@ -13,9 +13,12 @@ import { SchedulePage } from './pages/instructor/SchedulePage'
 import { CoordinatorLayout } from './pages/coordinator/CoordinatorLayout'
 import { CoordinatorMembersPage } from './pages/coordinator/CoordinatorMembersPage'
 import { CoordinatorAbsencePage } from './pages/coordinator/CoordinatorAbsencePage'
+import { CoordinatorDocumentsPage } from './pages/coordinator/CoordinatorDocumentsPage'
+import { CoordinatorReportsPage } from './pages/coordinator/CoordinatorReportsPage'
 import { ExecutiveLayout } from './pages/executive/ExecutiveLayout'
 import { ExecutiveOverviewPage } from './pages/executive/ExecutiveOverviewPage'
 import { ExecutiveProgramsPage } from './pages/executive/ExecutiveProgramsPage'
+import { ExecutiveAbsenceStatsPage } from './pages/executive/ExecutiveAbsenceStatsPage'
 import { AdminDashboard } from './pages/AdminDashboard'
 
 function App() {
@@ -42,7 +45,10 @@ function App() {
             <Route element={<ProtectedRoute allowedRoles={['program_coordinator']} />}>
               <Route path="/coordinator" element={<CoordinatorLayout />}>
                 <Route index element={<CoordinatorMembersPage />} />
+                <Route path="grades" element={<GradesPage />} />
                 <Route path="absence" element={<CoordinatorAbsencePage />} />
+                <Route path="documents" element={<CoordinatorDocumentsPage />} />
+                <Route path="reports" element={<CoordinatorReportsPage />} />
               </Route>
             </Route>
 
@@ -54,6 +60,7 @@ function App() {
               <Route path="/executive" element={<ExecutiveLayout />}>
                 <Route index element={<ExecutiveOverviewPage />} />
                 <Route path="programs" element={<ExecutiveProgramsPage />} />
+                <Route path="absence-stats" element={<ExecutiveAbsenceStatsPage />} />
                 <Route path="manage" element={<AdminDashboard />} />
               </Route>
             </Route>

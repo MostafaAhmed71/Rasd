@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Alert } from '../../components/Alert'
+import { useAuth } from '../../contexts/AuthContext'
 import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus'
 import { downloadBlob, exportSectionGradesToExcel } from '../../lib/exportExcel'
 import { getSectionInstructorName } from '../../lib/sections'
@@ -39,7 +40,10 @@ function calcTotal(student: StudentWithGrade, fields: ReturnType<typeof getGrade
 }
 
 export function GradesPage() {
+  const { profile } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
+  const coursesHome =
+    profile?.role === 'program_coordinator' ? '/coordinator' : '/instructor/courses'
   const [sections, setSections] = useState<Section[]>([])
   const [selectedSectionId, setSelectedSectionId] = useState<string>('')
   const [students, setStudents] = useState<StudentWithGrade[]>([])
@@ -235,8 +239,8 @@ export function GradesPage() {
       {message && <Alert type="success">{message}</Alert>}
 
       <div className="panel flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <Link to="/instructor/courses" className="btn-secondary text-sm">
-          المواد الدراسية
+        <Link to={coursesHome} className="btn-secondary text-sm">
+          {profile?.role === 'program_coordinator' ? 'أعضاء برنامجي' : 'المواد الدراسية'}
         </Link>
         <select
           value={selectedSectionId}

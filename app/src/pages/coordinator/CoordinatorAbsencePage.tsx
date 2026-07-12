@@ -52,7 +52,7 @@ export function CoordinatorAbsencePage() {
 
     const { data, error: err } = await supabase
       .from('absence_requests')
-      .select('*, absence_request_lectures(*), profiles(full_name)')
+      .select('*, absence_request_lectures(*), profiles!instructor_id(full_name)')
       .in('instructor_id', instructorIds)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })

@@ -53,7 +53,7 @@ export function CoordinatorMembersPage() {
 
     const { data: sections } = await supabase
       .from('sections')
-      .select('*, profiles(full_name)')
+      .select('*, profiles!instructor_id(full_name)')
       .eq('program_id', prog.id)
 
     const sectionList = (sections as Section[]) ?? []
@@ -66,7 +66,7 @@ export function CoordinatorMembersPage() {
       instructorIds.length
         ? supabase
             .from('absence_requests')
-            .select('*, absence_request_lectures(*), profiles(full_name)')
+            .select('*, absence_request_lectures(*), profiles!instructor_id(full_name)')
             .in('instructor_id', instructorIds)
             .eq('status', 'pending')
         : Promise.resolve({ data: [] as AbsenceRequest[] }),
@@ -159,10 +159,12 @@ export function CoordinatorMembersPage() {
         <div className="skeleton h-40 w-full" />
       ) : !program ? (
         <div className="panel p-8 text-center text-text-secondary">
-          لم يُعيَّن لك برنامج بعد. تواصل مع المدير التنفيذي.
+          لم يُعيَّن لك برنامج بعد. تواصل مع المدير التنفيذي لتعيينك منسقاً وربط الشعب بالبرنامج.
         </div>
       ) : members.length === 0 ? (
-        <div className="panel p-8 text-center text-text-secondary">لا يوجد أعضاء في البرنامج.</div>
+        <div className="panel p-8 text-center text-text-secondary">
+          لا يوجد أعضاء مرتبطون بالبرنامج. تأكد من ربط الشعب بـ program_id من إدارة النظام.
+        </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {members.map((m) => (

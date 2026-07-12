@@ -51,6 +51,9 @@ export function ExecutiveProgramsPage() {
 
   const assignCoordinator = async (programId: string) => {
     if (!selectedCoordinator) return
+
+    const previous = programs.find((p) => p.id === programId)?.coordinator_id ?? null
+
     const { error: err } = await supabase
       .from('programs')
       .update({ coordinator_id: selectedCoordinator })
@@ -65,6 +68,18 @@ export function ExecutiveProgramsPage() {
       .from('profiles')
       .update({ role: 'program_coordinator' })
       .eq('id', selectedCoordinator)
+
+    // أعد المنسق السابق إلى عضو تدريس إن لم يعد منسقاً لأي برنامج آخر
+    if (previous && previous !== selectedCoordinator) {
+      const { data: stillCoord } = await supabase
+        .from('programs')
+        .select('id')
+        .eq('coordinator_id', previous)
+        .limit(1)
+      if (!stillCoord?.length) {
+        await supabase.from('profiles').update({ role: 'instructor' }).eq('id', previous)
+      }
+    }
 
     setAssigningId(null)
     setSelectedCoordinator('')
