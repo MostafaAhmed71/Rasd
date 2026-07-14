@@ -1,12 +1,15 @@
-Version: v1.7.1
-Date: 2026-07-12
+Version: v1.7.2
+Date: 2026-07-14
 
 Changes
-- تحديث أسماء الحسابات التجريبية: د. خلف الشمري (مدير)، مها العنزي (منسقة)، د. مها عياد (عضو تدريس)
+- تمديد نهاية الفترة التجريبية حتى يوم الجمعة 17 يوليو 2026 الساعة 12 صباحاً
 
 Files Modified
-- app/src/pages/LoginPage.tsx
-- supabase/migrations/010_demo_program_wiring.sql
+- app/src/lib/trial.ts
+- app/src/hooks/useTrialCountdown.ts
+- app/src/components/TrialBanner.tsx
+- app/src/components/TrialGate.tsx
+- app/.env.example
 - VERSION.md
 
-Previous: v1.7.0
+Previous: v1.7.1

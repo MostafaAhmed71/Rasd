@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import {
+  formatTrialEndShort,
+  getTrialDays,
   getTrialEnd,
   getTrialRemainingMs,
+  getTrialTotalMs,
   isTrialExpired,
   TRIAL_DAYS,
 } from '../lib/trial'
@@ -41,14 +44,7 @@ export function useTrialCountdown(tickMs = 1000): TrialCountdownParts {
 }
 
 export function formatTrialEndLabel(): string {
-  return getTrialEnd().toLocaleString('ar-SA', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return formatTrialEndShort()
 }
 
-export { TRIAL_DAYS }
+export { getTrialDays, getTrialEnd, getTrialTotalMs, TRIAL_DAYS }

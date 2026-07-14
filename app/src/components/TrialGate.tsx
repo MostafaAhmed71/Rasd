@@ -3,9 +3,8 @@ import {
   DEVELOPER_NAME,
   DEVELOPER_PHONE,
   DEVELOPER_PHONE_TEL,
-  getTrialEnd,
+  formatTrialEndShort,
   isTrialExpired,
-  TRIAL_DAYS,
 } from '../lib/trial'
 
 interface TrialGateProps {
@@ -16,12 +15,6 @@ export function TrialGate({ children }: TrialGateProps) {
   if (!isTrialExpired()) {
     return <>{children}</>
   }
-
-  const endDate = getTrialEnd().toLocaleDateString('ar-SA', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
 
   return (
     <div className="login-shell">
@@ -35,7 +28,7 @@ export function TrialGate({ children }: TrialGateProps) {
 
         <div className="space-y-4 p-6 text-center">
           <p className="text-sm leading-relaxed text-text-secondary">
-            انتهت الفترة التجريبية ({TRIAL_DAYS} أيام) في {endDate}.
+            انتهت الفترة التجريبية في {formatTrialEndShort()}.
             <br />
             الرجاء التواصل مع المطور لإعادة تفعيل المنصة.
           </p>

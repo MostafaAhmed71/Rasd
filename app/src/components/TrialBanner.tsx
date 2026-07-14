@@ -1,4 +1,9 @@
-import { formatTrialEndLabel, useTrialCountdown, TRIAL_DAYS } from '../hooks/useTrialCountdown'
+import {
+  formatTrialEndLabel,
+  getTrialDays,
+  getTrialTotalMs,
+  useTrialCountdown,
+} from '../hooks/useTrialCountdown'
 
 function pad(n: number) {
   return String(n).padStart(2, '0')
@@ -22,6 +27,8 @@ interface TrialBannerProps {
 
 export function TrialBanner({ compact = false }: TrialBannerProps) {
   const { days, hours, minutes, seconds, expired, totalMs } = useTrialCountdown()
+  const trialDays = getTrialDays()
+  const progressPct = Math.max(2, Math.min(100, (totalMs / getTrialTotalMs()) * 100))
 
   if (expired) return null
 
@@ -43,7 +50,9 @@ export function TrialBanner({ compact = false }: TrialBannerProps) {
               <p className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
                 فترة تجريبية
               </p>
-              <p className="font-display mt-0.5 text-sm font-bold">مدة التجربة {TRIAL_DAYS} أيام</p>
+              <p className="font-display mt-0.5 text-sm font-bold">
+                حتى الجمعة 12 ص · {trialDays} أيام
+              </p>
             </div>
             <div className="flex shrink-0 gap-1.5" dir="ltr">
               <TimeUnit value={pad(days)} label="يوم" />
@@ -57,9 +66,7 @@ export function TrialBanner({ compact = false }: TrialBannerProps) {
         <div className="h-0.5 bg-white/20">
           <div
             className="h-full bg-white/70 transition-all duration-1000 ease-linear"
-            style={{
-              width: `${Math.max(2, Math.min(100, (totalMs / (TRIAL_DAYS * 24 * 60 * 60 * 1000)) * 100))}%`,
-            }}
+            style={{ width: `${progressPct}%` }}
           />
         </div>
       </div>
@@ -77,7 +84,7 @@ export function TrialBanner({ compact = false }: TrialBannerProps) {
           <p className="font-display text-sm font-bold sm:text-[15px]">
             أنت تستخدم نسخة تجريبية
             <span className="mx-1.5 font-normal text-white/50">·</span>
-            <span className="font-semibold text-white/90">المدة {TRIAL_DAYS} أيام</span>
+            <span className="font-semibold text-white/90">حتى الجمعة 12 ص</span>
           </p>
           <p className="mt-0.5 hidden text-xs text-white/65 sm:block">
             ينتهي الوصول التلقائي في {formatTrialEndLabel()}
@@ -100,9 +107,7 @@ export function TrialBanner({ compact = false }: TrialBannerProps) {
       <div className="h-0.5 bg-black/20">
         <div
           className={`h-full transition-all duration-1000 ease-linear ${urgent ? 'bg-amber-200' : 'bg-emerald-300/80'}`}
-          style={{
-            width: `${Math.max(2, Math.min(100, (totalMs / (TRIAL_DAYS * 24 * 60 * 60 * 1000)) * 100))}%`,
-          }}
+          style={{ width: `${progressPct}%` }}
         />
       </div>
     </div>
