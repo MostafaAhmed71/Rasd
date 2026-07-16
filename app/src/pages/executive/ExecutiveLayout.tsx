@@ -3,6 +3,7 @@ import { AppShell, type NavItem } from '../../components/AppShell'
 const NAV: NavItem[] = [
   { to: '/executive', label: 'نظرة عامة', end: true },
   { to: '/executive/programs', label: 'البرامج والمنسقون' },
+  { to: '/executive/users', label: 'إدارة المستخدمين' },
   { to: '/executive/absence-stats', label: 'إحصائيات الاعتذار' },
   { to: '/executive/manage', label: 'إدارة النظام' },
 ]

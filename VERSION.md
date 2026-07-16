@@ -1,15 +1,12 @@
-Version: v1.7.2
-Date: 2026-07-14
+Version: v1.8.2
+Date: 2026-07-16
 
 Changes
-- تمديد نهاية الفترة التجريبية حتى يوم الجمعة 17 يوليو 2026 الساعة 12 صباحاً
+- تحديث الاعتماد إلى «د. مها الشبيكان» بدون كلمة «تطوير»
 
 Files Modified
-- app/src/lib/trial.ts
-- app/src/hooks/useTrialCountdown.ts
-- app/src/components/TrialBanner.tsx
-- app/src/components/TrialGate.tsx
-- app/.env.example
+- app/src/lib/brand.ts
+- app/src/components/CreditFooter.tsx
 - VERSION.md
 
-Previous: v1.7.1
+Previous: v1.8.1

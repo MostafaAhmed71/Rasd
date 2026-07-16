@@ -4,6 +4,7 @@ import { Alert } from '../components/Alert'
 import { useAuth } from '../contexts/AuthContext'
 import { PLATFORM_COLLEGE, PLATFORM_NAME, PLATFORM_ORG } from '../lib/brand'
 import { homePathForRole } from '../lib/roles'
+import { CreditFooter } from '../components/CreditFooter'
 
 export function RegisterPage() {
   const { signUp, user, profile, loading } = useAuth()
@@ -49,13 +50,14 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="app-shell flex min-h-screen min-h-dvh items-center justify-center p-4">
+    <div className="login-shell">
+      <div className="w-full max-w-md">
       <div className="auth-card">
         <div className="auth-header">
-          <p className="relative z-10 text-xs font-medium text-butter/70">{PLATFORM_ORG}</p>
+          <p className="relative z-10 text-xs font-medium text-white/70">{PLATFORM_ORG}</p>
           <h1 className="font-display relative z-10 mt-2 text-2xl font-bold">{PLATFORM_NAME}</h1>
-          <p className="relative z-10 mt-3 text-sm text-butter/80">{PLATFORM_COLLEGE}</p>
-          <p className="relative z-10 mt-2 text-sm text-butter/70">إنشاء حساب جديد</p>
+          <p className="relative z-10 mt-3 text-sm text-white/80">{PLATFORM_COLLEGE}</p>
+          <p className="relative z-10 mt-2 text-sm text-white/70">إنشاء حساب جديد</p>
         </div>
 
         <form onSubmit={handleSubmit} className="animate-fade-up space-y-4 p-5 sm:p-6">
@@ -139,6 +141,8 @@ export function RegisterPage() {
             </Link>
           </p>
         </form>
+      </div>
+      <CreditFooter variant="auth" />
       </div>
     </div>
   )
