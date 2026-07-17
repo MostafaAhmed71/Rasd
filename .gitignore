@@ -16,6 +16,12 @@ app/.env
 .idea/
 .vscode/*
 !.vscode/extensions.json
+.cursor/
+
+# Archives & backups
+*.rar
+*.zip
+Versions/
 
 # Cursor assets (optional local images)
 assets/

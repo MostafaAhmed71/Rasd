@@ -1,77 +1,171 @@
 # بوابة أعضاء هيئة التدريس
 
-منصة ويب لأعضاء هيئة التدريس في الكلية التطبيقية (رفحاء) — جامعة الحدود الشمالية: رصد درجات التدريب الميداني، الجداول، وطلبات الاعتذار.
+منصة ويب لأعضاء هيئة التدريس في الكلية التطبيقية (رفحاء) — جامعة الحدود الشمالية.
 
-## الألوان
-- **Butter:** `#ffefb3`
-- **Green:** `#013e37`
+تدعم رصد الدرجات (مقررات عادية وتدريب ميداني)، الجداول الدراسية وجداول المراقبة، طلبات الاعتذار، إدارة البرامج، والتقارير. صلاحيات الوصول مفصولة حسب الدور عبر سياسات قاعدة البيانات (RLS).
 
-## الخطوة 1: إعداد قاعدة البيانات
+| | |
+|---|---|
+| الاسم المختصر | بوابة الأعضاء |
+| الإصدار | v1.8.3 |
+| المستودع | https://github.com/MostafaAhmed71/Rasd |
 
-1. افتح [لوحة Supabase](https://supabase.com/dashboard/project/vebgmikrpwyydsqwgkvd/sql/new)
-2. انسخ محتوى الملف `supabase/migrations/001_initial_schema.sql` والصقه في SQL Editor
-3. اضغط **Run** لتنفيذ السكربت
+---
 
-## الخطوة 2: إنشاء حساب Admin
+## الأدوار
 
-من Supabase → **Authentication** → **Users** → **Add user**:
+**عضو هيئة تدريس** — مقرراته فقط: رصد الدرجات، عرض الجداول، تقديم طلب اعتذار.
 
-- Email: بريدك
-- Password: كلمة مرور
-- User Metadata (JSON):
-```json
-{
-  "role": "admin",
-  "full_name": "مسؤول النظام"
-}
-```
+**منسق برنامج** — إشراف على أعضاء برنامجه: مراجعة الدرجات، قبول أو رفض الاعتذار، رفع الجداول والمستندات، تقارير البرنامج.
 
-## الخطوة 3: إنشاء حسابات أعضاء التدريس
+**المدير التنفيذي** — نظرة على كل البرامج: إحصائيات الاعتذار (بدون قبول/رفض)، تقارير مجمّعة، وإدارة حسابات المستخدمين.
 
-نفس الخطوة مع metadata:
-```json
-{
-  "role": "instructor",
-  "full_name": "د. أحمد محمد"
-}
-```
+| | عضو هيئة تدريس | منسق برنامج | المدير التنفيذي |
+|---|---|---|---|
+| رصد الدرجات | إدخال | عرض وتعديل | تقارير |
+| طلبات الاعتذار | إرسال | قبول / رفض | إحصائيات فقط |
+| الجداول | عرض | رفع وتعديل | رفع وتعديل |
+| النطاق | مقرراته | برنامجه | كل البرامج |
+| إدارة المستخدمين | — | أعضاء برنامجه | الكل |
 
-## النشر (Vercel / Netlify)
+التفاصيل: [Docs/PERMISSIONS.md](Docs/PERMISSIONS.md)
 
-### إعدادات Vercel
-- **Root Directory:** اتركه فارغاً (الجذر) — ملف `vercel.json` يوجّه البناء تلقائياً
-- **Environment Variables** (مطلوبة):
-  - `VITE_SUPABASE_URL`
-  - `VITE_SUPABASE_ANON_KEY`
+المسارات: `/instructor/*` · `/coordinator/*` · `/executive/*`
 
-### إعدادات Netlify
-- يستخدم `netlify.toml` تلقائياً — مجلد البناء: `app/dist`
+---
 
+## التقنيات
 
-```bash
-cd app
-npm install
-npm run dev
-```
+React 19، TypeScript، Vite، Tailwind CSS 4، React Router، Supabase (Auth، PostgreSQL، RLS، Storage)، ExcelJS / PapaParse، وPWA عبر vite-plugin-pwa.
 
-افتح المتصفح على `http://localhost:5173`
+### الألوان والخطوط
 
-## الاستخدام
+| | |
+|---|---|
+| الأخضر الأساسي | `#1B4332` |
+| الأخضر الثانوي | `#2D6A4F` |
+| خلفية الصفحة | `#F7F9F8` |
+| الخطوط | Cairo، IBM Plex Sans Arabic |
 
-1. **Admin:** استورد ملف Excel/CSV للطلاب → اربط كل شعبة بعضو التدريس → راقب نسبة الإنجاز → صدّر النتيجة
-2. **Instructor:** اختر الشعبة → أدخل الدرجات (تُحفظ تلقائياً عند الخروج من كل خانة)
+---
 
-## بنية المشروع
+## هيكل المجلدات
 
 ```
 Maha/
-├── project-spec.md          # المواصفات الكاملة
+├── Docs/
 ├── supabase/
-│   └── migrations/          # سكربتات قاعدة البيانات
-└── app/                     # تطبيق React
-    ├── src/
-    │   ├── pages/           # صفحات التطبيق
-    │   ├── lib/             # Supabase, استيراد, تصدير
-    │   └── types/           # أنواع TypeScript
-    └── .env                 # مفاتيح Supabase
+│   ├── migrations/
+│   └── functions/create-user/
+└── app/
+    └── src/
+        ├── components/
+        ├── lib/
+        ├── pages/instructor|coordinator|executive/
+        └── types/
 ```
+
+---
+
+## التشغيل محلياً
+
+المتطلبات: Node.js 20، ومشروع Supabase.
+
+```bash
+git clone https://github.com/MostafaAhmed71/Rasd.git
+cd Rasd/app
+npm install
+```
+
+أنشئ `app/.env`:
+
+```env
+VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### قاعدة البيانات
+
+نفّذ ملفات `supabase/migrations/` بالترتيب (من `001` إلى `012`) من SQL Editor في لوحة Supabase. إن كان المشروع مُعدّاً مسبقاً، نفّذ فقط الملفات التي لم تُنفَّذ بعد.
+
+| الملف | المحتوى |
+|---|---|
+| 001 | المخطط الأولي |
+| 002–003 | رمز المقرر واسم عضو التدريس |
+| 004–005 | المستندات وطلبات الاعتذار |
+| 006–007 | السياسات وهيكل الدرجات |
+| 008 | الأدوار والبرامج ونوع المقرر |
+| 009 | إصلاح سياسات RLS |
+| 010 | بيانات تجريبية (اختياري) |
+| 011 | سياسات مصفوفة الصلاحيات |
+| 012 | إنشاء ملفات المستخدمين للمدير |
+
+### أول حساب
+
+من Authentication → Users → Add user، مع metadata:
+
+```json
+{
+  "role": "executive_director",
+  "full_name": "اسم المدير"
+}
+```
+
+القيم المقبولة لـ `role`: `instructor`، `program_coordinator`، `executive_director` (و`admin` كتوافق قديم).
+
+بعد الدخول يمكن إنشاء بقية الحسابات من: إدارة النظام → إدارة المستخدمين.
+
+```bash
+npm run dev
+```
+
+العنوان: http://localhost:5173
+
+---
+
+## النشر
+
+**Vercel:** المجلد الجذر مع `vercel.json`. أضف `VITE_SUPABASE_URL` و`VITE_SUPABASE_ANON_KEY`.
+
+**Netlify:** يعتمد على `netlify.toml`، ومجلد البناء `app/dist`. نفس المتغيرات.
+
+```bash
+cd app
+npm run build
+```
+
+---
+
+## دالة إنشاء المستخدمين (اختياري)
+
+```bash
+supabase functions deploy create-user
+```
+
+تتطلب `SUPABASE_SERVICE_ROLE_KEY` في إعدادات الدوال.
+
+---
+
+## حسابات للتطوير
+
+| البريد | الدور | كلمة المرور |
+|---|---|---|
+| Maha01@g.com | مدير تنفيذي | 123456789 |
+| Maha02@g.com | منسق برنامج | 123456789 |
+| Maha03@g.com | عضو هيئة تدريس | 123456789 |
+
+للتطوير فقط — لا تُستخدم في الإنتاج.
+
+---
+
+## مستندات إضافية
+
+- [Docs/PERMISSIONS.md](Docs/PERMISSIONS.md) — الصلاحيات
+- [Docs/PLATFORM-COMPLETE.md](Docs/PLATFORM-COMPLETE.md) — دليل المنصة
+- [VERSION.md](VERSION.md) — سجل الإصدارات
+
+---
+
+© 2026 الكلية التطبيقية (رفحاء) — جامعة الحدود الشمالية. جميع الحقوق محفوظة.
+
+د. مها الشبيكان
